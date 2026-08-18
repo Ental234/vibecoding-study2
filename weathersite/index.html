@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A1815">
+<meta name="color-scheme" content="dark">
+<title>지금, 그곳 — 세계 랜드마크 날씨</title>
+<meta name="description" content="세계 랜드마크를 지도에서 골라 그 장소의 지금 날씨를 봅니다. 날씨와 낮·밤에 따라 배경이 함께 바뀝니다.">
+
+<!-- 탭 아이콘: 외부 파일 없이 인라인 SVG -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231A1815'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23D98A66'/%3E%3C/svg%3E">
+
+<!-- 지도: Leaflet (CDN) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 배경 레이어 2장을 번갈아 쓰면서 크로스페이드한다 (PRD 4절) -->
+<div class="bg" aria-hidden="true">
+  <div class="bg__layer is-on theme-clear-night" id="bgA"></div>
+  <div class="bg__layer" id="bgB"></div>
+</div>
+
+<header class="topbar">
+  <p class="topbar__eyebrow">WORLD LANDMARK WEATHER</p>
+  <h1 class="topbar__title">지금, 그곳</h1>
+  <p class="topbar__desc">지도에서 랜드마크를 고르면 그 장소의 현재 날씨를 불러오고, 날씨와 낮·밤에 맞춰 배경이 바뀝니다.</p>
+</header>
+
+<div class="app">
+
+  <!-- ================= 사이드패널 ================= -->
+  <aside class="panel" aria-label="장소 검색과 목록">
+
+    <!-- 도시 검색 (PRD 3.3) -->
+    <div class="panel__block">
+      <label class="label" for="search">도시 검색</label>
+      <div class="search">
+        <input
+          id="search"
+          class="search__input"
+          type="text"
+          placeholder="도시명 입력 (예: Seoul, Paris)"
+          autocomplete="off"
+          role="combobox"
+          aria-expanded="false"
+          aria-controls="searchResults"
+          aria-autocomplete="list">
+        <button class="search__clear" id="searchClear" type="button" aria-label="검색어 지우기" hidden>&times;</button>
+        <div class="search__spinner" id="searchSpinner" hidden><span class="spinner spinner--sm"></span></div>
+        <ul class="search__results" id="searchResults" role="listbox" aria-label="검색 결과" hidden></ul>
+      </div>
+    </div>
+
+    <!-- 필터 (PRD 3.4) -->
+    <div class="panel__block panel__block--filters">
+      <div class="filters__head">
+        <span class="label">필터</span>
+        <button class="btn-text" id="filterReset" type="button">초기화</button>
+      </div>
+
+      <label class="label label--sub" for="continent">지역</label>
+      <select class="select" id="continent" aria-label="대륙 선택">
+        <option value="all">전체 대륙</option>
+      </select>
+
+      <span class="label label--sub" id="weatherLabel">날씨 상태</span>
+      <div class="chips" id="weatherChips" role="group" aria-labelledby="weatherLabel"></div>
+
+      <span class="label label--sub" id="tempLabel">기온 범위 <span class="range__value" id="tempValue">-40° ~ 50°</span></span>
+      <div class="range" id="tempRange">
+        <div class="range__track"></div>
+        <div class="range__fill" id="tempFill"></div>
+        <input type="range" id="tempMin" min="-40" max="50" step="1" value="-40" aria-label="최저 기온">
+        <input type="range" id="tempMax" min="-40" max="50" step="1" value="50" aria-label="최고 기온">
+      </div>
+
+      <p class="notice" id="filterNotice" hidden></p>
+    </div>
+
+    <!-- 랜드마크 리스트 (PRD 3.2) -->
+    <div class="panel__listhead">
+      <span class="label">랜드마크</span>
+      <span class="count" id="listCount"></span>
+    </div>
+    <div class="panel__scroll">
+      <ul class="list" id="list" aria-label="랜드마크 목록"></ul>
+    </div>
+  </aside>
+
+  <!-- ================= 지도 + 상세 ================= -->
+  <main class="stage">
+    <div id="map" aria-label="세계 지도"></div>
+
+    <section class="detail" id="detail" aria-live="polite" aria-label="선택한 장소의 날씨"></section>
+  </main>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="data/landmarks.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

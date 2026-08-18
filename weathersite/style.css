@@ -1,0 +1,769 @@
+/* ============================================================
+   지금, 그곳 — 스타일
+   Project Hub(Intro/DESIGN.md)의 팔레트와 규칙을 그대로 상속한다.
+   주의: 포인트 색(#D98A66) 위에는 흰 글씨를 쓰지 않는다 (대비 2.9:1).
+        대신 배경색(#1A1815)을 글씨로 쓴다 (6.4:1).
+   ============================================================ */
+
+:root {
+  --bg:            #1A1815;
+  --surface:       #232019;
+  --surface-hover: #2A261E;
+  --text:          #F0EDE7;
+  --text-sub:      #8A857E;
+  --accent:        #D98A66;
+  --accent-hover:  #C97B5A;
+  --border:        #302B24;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+
+  --radius-card: 12px;
+  --radius-ctrl: 8px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   1. 배경 (PRD 4절 — 날씨 5종 X 낮/밤 = 10종)
+   레이어 2장을 겹쳐두고 opacity로 교차시킨다.
+   덕분에 새 날씨를 불러오는 동안에도 이전 배경이 그대로 남는다.
+   ============================================================ */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+}
+
+.bg__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.bg__layer.is-on { opacity: 1; }
+
+/* --- 맑음 --- */
+.theme-clear-day {
+  background:
+    radial-gradient(1200px 820px at 50% -8%,  rgba(217,138,102,0.18), transparent 70%),
+    radial-gradient(900px 620px at 12% 108%,  rgba(217,138,102,0.10), transparent 66%),
+    #1A1815;
+}
+.theme-clear-night {
+  background:
+    radial-gradient(1150px 800px at 50% 6%,   rgba(25,26,62,0.85),    transparent 72%),
+    radial-gradient(700px 520px at 84% 106%,  rgba(86,92,158,0.14),   transparent 66%),
+    #151317;
+}
+
+/* --- 흐림 --- */
+.theme-cloudy-day {
+  background:
+    radial-gradient(1250px 840px at 50% -6%,  rgba(163,155,143,0.16), transparent 72%),
+    radial-gradient(880px 600px at 18% 106%,  rgba(120,112,102,0.10), transparent 68%),
+    #1A1815;
+}
+.theme-cloudy-night {
+  background:
+    radial-gradient(1150px 820px at 50% 4%,   rgba(58,64,76,0.55),    transparent 72%),
+    radial-gradient(760px 540px at 80% 108%,  rgba(90,96,110,0.10),   transparent 66%),
+    #16161A;
+}
+
+/* --- 비 --- */
+.theme-rain-day {
+  background:
+    radial-gradient(1200px 820px at 50% -6%,  rgba(64,116,116,0.20),  transparent 72%),
+    radial-gradient(860px 600px at 16% 106%,  rgba(40,78,84,0.14),    transparent 68%),
+    #171A1A;
+}
+.theme-rain-night {
+  background:
+    radial-gradient(1150px 800px at 50% 5%,   rgba(18,52,58,0.75),    transparent 72%),
+    radial-gradient(720px 520px at 82% 106%,  rgba(34,84,92,0.12),    transparent 66%),
+    #121618;
+}
+
+/* --- 눈 --- */
+.theme-snow-day {
+  background:
+    radial-gradient(1250px 850px at 50% -8%,  rgba(214,224,232,0.16), transparent 72%),
+    radial-gradient(880px 600px at 20% 106%,  rgba(180,196,210,0.09), transparent 68%),
+    #191A1C;
+}
+.theme-snow-night {
+  background:
+    radial-gradient(1150px 800px at 50% 5%,   rgba(70,88,112,0.50),   transparent 72%),
+    radial-gradient(740px 520px at 78% 108%,  rgba(120,140,164,0.10), transparent 66%),
+    #141619;
+}
+
+/* --- 뇌우 (상단에 옅은 섬광 띠) --- */
+.theme-storm-day {
+  background:
+    linear-gradient(180deg, rgba(206,196,222,0.11), transparent 26%),
+    radial-gradient(1050px 720px at 50% 8%,   rgba(78,60,110,0.45),   transparent 70%),
+    #17141A;
+}
+.theme-storm-night {
+  background:
+    linear-gradient(180deg, rgba(150,144,186,0.08), transparent 22%),
+    radial-gradient(1050px 740px at 50% 6%,   rgba(38,34,78,0.80),    transparent 72%),
+    #111018;
+}
+
+/* ============================================================
+   2. 레이아웃
+   ============================================================ */
+.topbar {
+  padding: 26px 24px 18px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.topbar__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--text-sub);
+}
+
+.topbar__title {
+  margin: 10px 0 0;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.topbar__desc {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-sub);
+  max-width: 60ch;
+}
+
+.app {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+  padding: 0 24px 24px;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   3. 사이드패널
+   ============================================================ */
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: rgba(35, 32, 25, 0.88);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.panel__block {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel__block--filters { display: grid; gap: 8px; }
+
+.panel__listhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 14px 18px 8px;
+}
+
+.panel__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 12px 12px;
+}
+
+.label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-sub);
+}
+
+.label--sub {
+  margin-top: 6px;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  font-size: 12px;
+}
+
+.count { font-size: 12px; color: var(--text-sub); }
+
+.btn-text {
+  background: none;
+  border: 0;
+  padding: 4px 2px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.btn-text:hover { color: var(--accent); }
+
+.filters__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---------- 검색 ---------- */
+.search { position: relative; margin-top: 8px; }
+
+.search__input,
+.select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 38px 0 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  font: inherit;
+  font-size: 14px;
+}
+
+.select {
+  padding-right: 12px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-sub) 50%),
+                    linear-gradient(135deg, var(--text-sub) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.select option { background: var(--surface); color: var(--text); }
+
+.search__input::placeholder { color: var(--text-sub); }
+
+.search__input:focus,
+.select:focus { outline: none; border-color: var(--accent); }
+
+.search__clear,
+.search__spinner {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.search__clear {
+  width: 24px;
+  height: 24px;
+  justify-content: center;
+  background: none;
+  border: 0;
+  color: var(--text-sub);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+}
+.search__clear:hover { color: var(--text); }
+
+.search__results {
+  position: absolute;
+  z-index: 1000;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-ctrl);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.search__item {
+  width: 100%;
+  display: block;
+  padding: 9px 10px;
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.search__item:hover,
+.search__item.is-active { background: var(--surface-hover); color: var(--accent); }
+
+.search__item small { display: block; margin-top: 2px; font-size: 12px; color: var(--text-sub); }
+
+.search__empty {
+  padding: 12px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-sub);
+}
+
+/* ---------- 날씨 칩 ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  min-height: 32px;
+  padding: 5px 11px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.chip:hover:not(:disabled) { border-color: var(--accent); color: var(--text); }
+
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);            /* 포인트 색 위에는 흰 글씨 금지 */
+  font-weight: 600;
+}
+
+.chip:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- 기온 범위 (엄지 2개짜리 슬라이더) ---------- */
+.range { position: relative; height: 32px; margin-top: 2px; }
+
+.range__track,
+.range__fill {
+  position: absolute;
+  top: 15px;
+  height: 3px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.range__track { left: 0; right: 0; background: var(--border); }
+.range__fill { background: var(--accent); }
+
+.range input[type="range"] {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;   /* 트랙은 클릭을 통과시키고 엄지만 잡히게 */
+}
+
+.range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+.range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+
+.range input[type="range"]::-moz-range-track { background: none; }
+
+.range input[type="range"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
+
+.range input[type="range"]:disabled::-webkit-slider-thumb { background: var(--text-sub); cursor: not-allowed; }
+.range input[type="range"]:disabled::-moz-range-thumb { background: var(--text-sub); cursor: not-allowed; }
+
+.range__value { float: right; letter-spacing: 0; color: var(--text); }
+
+.notice {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-sub);
+}
+
+/* ---------- 랜드마크 리스트 ---------- */
+.list { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+
+.list__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.list__item:hover { background: var(--surface-hover); }
+
+.list__item.is-selected {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.list__item.is-selected .list__name { color: var(--accent); }
+
+.list__text { flex: 1; min-width: 0; }
+
+.list__name { display: block; font-size: 15px; font-weight: 500; }
+
+.list__country { display: block; margin-top: 2px; font-size: 12px; color: var(--text-sub); }
+
+.list__weather {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-sub);
+  white-space: nowrap;
+}
+
+.list__weather svg { width: 18px; height: 18px; display: block; color: var(--accent); }
+
+.list__temp { font-variant-numeric: tabular-nums; }
+
+.list__empty {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-sub);
+}
+
+/* 초기 일괄 로딩용 스켈레톤 */
+.skeleton {
+  height: 56px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(240,237,231,0.04), rgba(240,237,231,0.09), rgba(240,237,231,0.04));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ============================================================
+   4. 지도
+   ============================================================ */
+.stage {
+  position: relative;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#map { position: absolute; inset: 0; background: #16151A; }
+
+/* Leaflet 기본 UI를 팔레트에 맞춤 */
+.leaflet-container { font-family: var(--font); background: #16151A; }
+
+.leaflet-control-zoom a {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+.leaflet-control-zoom a:hover { background: var(--surface-hover); color: var(--accent); }
+
+.leaflet-control-attribution {
+  background: rgba(26, 24, 21, 0.8);
+  color: var(--text-sub);
+  font-size: 10px;
+}
+.leaflet-control-attribution a { color: var(--text-sub); }
+
+/* ---------- 마커 ---------- */
+/* 클릭 영역: 34px 정사각형. 안에 16px 점을 가운데 두어 겉보기는 그대로 두고
+   누를 수 있는 면적만 넓힌다 (작은 점은 조준하기 어렵다). */
+.pin-hit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.pin {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px rgba(217,138,102,0.5), 0 2px 6px rgba(0,0,0,0.5);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 히트박스 어디에 커서가 들어와도 점이 반응하게 한다 */
+.pin-hit:hover .pin { transform: scale(1.25); }
+
+.pin.is-selected {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 4px rgba(217,138,102,0.28), 0 0 0 8px rgba(217,138,102,0.12), 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* 검색으로 추가된 위치는 랜드마크와 구분되게 (PRD 3.3) */
+.pin--search {
+  background: transparent;
+  border: 2px dashed var(--text);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.pin--search.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(240,237,231,0.16), 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* 키보드 포커스는 히트박스가 아니라 점 주위에 그려지도록 안쪽으로 당긴다 */
+.pin-hit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -5px;
+  border-radius: 50%;
+}
+
+/* ============================================================
+   5. 상세 카드 (선택한 장소의 현재 날씨)
+   ============================================================ */
+.detail {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 500;            /* 타일(400) 위, 줌 컨트롤(800) 아래 */
+  width: 300px;
+  max-width: calc(100% - 32px);
+  background: rgba(35, 32, 25, 0.92);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 16px 18px;
+  overflow: hidden;
+}
+
+.detail__place { margin: 0; font-size: 16px; font-weight: 600; }
+.detail__country { margin: 3px 0 0; font-size: 12px; color: var(--text-sub); }
+
+.detail__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px dashed var(--text-sub);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-sub);
+  vertical-align: middle;
+}
+
+.detail__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.detail__icon { width: 40px; height: 40px; color: var(--accent); flex: none; }
+.detail__icon svg { width: 100%; height: 100%; display: block; }
+
+.detail__temp {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail__cond { margin: 10px 0 0; font-size: 14px; color: var(--text); }
+.detail__cond span { color: var(--text-sub); }
+
+.detail__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.detail__meta div { min-width: 0; }
+.detail__meta dt { font-size: 11px; color: var(--text-sub); }
+.detail__meta dd { margin: 3px 0 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+.detail__hint { margin: 0; font-size: 13px; line-height: 1.6; color: var(--text-sub); }
+
+/* 로딩 중에도 이전 내용은 남기고 위에 스피너만 덮는다 (PRD 3.5) */
+.detail__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 24, 21, 0.62);
+}
+
+/* ============================================================
+   6. 스피너 · 에러
+   ============================================================ */
+.spinner {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgba(240, 237, 231, 0.18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner--sm { width: 16px; height: 16px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 4px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.error { display: grid; gap: 10px; justify-items: start; }
+
+.error__msg { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text); }
+
+.btn {
+  min-height: 44px;
+  padding: 0 18px;
+  background: var(--accent);
+  color: var(--bg);            /* 포인트 색 위에는 흰 글씨 금지 */
+  border: 0;
+  border-radius: var(--radius-ctrl);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover { background: var(--accent-hover); }
+
+.btn--sm { min-height: 34px; padding: 0 14px; font-size: 13px; }
+
+/* ============================================================
+   7. 포커스 · 반응형 · 모션
+   ============================================================ */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+@media (max-width: 900px) {
+  .topbar { padding: 22px 20px 14px; }
+  .topbar__desc { font-size: 13px; }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 20px;
+  }
+
+  /* 좁은 화면에서는 지도를 맨 위로 올린다 */
+  .stage {
+    order: -1;
+    flex: none;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    /* 지도와 상세 카드가 각자 테두리를 갖게 되므로 껍데기는 투명하게 */
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  /* 지도를 절대배치에서 일반 흐름으로 되돌려, 아래에 카드가 놓일 자리를 만든다 */
+  #map {
+    position: relative;
+    inset: auto;
+    height: 45svh;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+  }
+
+  .panel__scroll { overflow: visible; }
+
+  /* 상세 카드는 지도 위에 띄우지 않고 아래로 내린다 */
+  .detail {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin-top: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg__layer { transition: none; }
+  .skeleton { animation: none; }
+  .spinner { animation-duration: 2s; }
+  .pin, .chip, .list__item, .btn, .btn-text { transition: none; }
+  .pin-hit:hover .pin { transform: none; }
+}
