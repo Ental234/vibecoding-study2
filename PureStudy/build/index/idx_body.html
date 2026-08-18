@@ -1,0 +1,239 @@
+<body class="bg-background font-body-md text-on-background"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.02)]"><div class="h-16 max-w-[960px] mx-auto px-margin-mobile flex items-center justify-between"><div class="flex items-center gap-2"><span class="font-headline-md text-primary tracking-tight">순공</span></div><nav class="hidden md:flex items-center gap-8"><a class="font-label-ui text-on-surface-variant hover:text-on-surface transition-colors" href="#about">소개</a><a class="font-label-ui text-on-surface-variant hover:text-on-surface transition-colors" href="#features">기능</a></nav><div class="flex items-center gap-4"><a class="bg-primary text-on-primary font-label-ui px-5 py-2.5 rounded-[10px] hover:-translate-y-0.5 transition-all" href="PureStudy.html">타이머 시작</a></div></div></header><main class="w-full pt-16"><div class="flex flex-col w-full font-body-md text-on-background">
+<section class="relative min-h-[819px] flex flex-col justify-center py-section-padding-lg overflow-hidden">
+<div class="absolute inset-0 bg-surface -z-10"></div>
+<!-- 배경 영상. 소리도 자막도 없는 장식이라 접근성 트리에서 뺀다.
+     원본 우상단에 DeeVid AI 워터마크가 박혀 있다. origin-bottom으로 1.25배 키워
+     위쪽 20%를 화면 밖으로 밀어낸다 — 창 크기와 무관하게 잘려 나간다 -->
+<video class="absolute inset-0 w-full h-full object-cover origin-bottom scale-125 -z-10 opacity-50" id="hero-video" autoplay="" loop="" muted="" playsinline="" preload="auto" aria-hidden="true">
+<source src="v2_awv-928ef7c622ca02ac.mp4" type="video/mp4"/>
+</video>
+<!-- 스크림 — 제목이 읽힐 만큼만 종이색을 덮는다. 더 진하게 깔면 영상이 형체만 남는다 -->
+<div class="absolute inset-0 -z-10 bg-gradient-to-b from-surface/45 via-surface/35 to-surface/60"></div>
+<div class="absolute top-1/4 -left-1/4 w-[150%] h-1/2 bg-gradient-to-tr from-primary-fixed-dim/20 via-surface to-tertiary-fixed/30 -z-10 blur-[120px] rounded-full rotate-[-15deg] opacity-60 mix-blend-multiply"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile w-full text-center relative z-10 flex flex-col items-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high/50 border border-outline/10 backdrop-blur-md mb-8 animate-fade-in-up">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-caption-caps text-on-surface-variant tracking-[0.2em] text-xs">CALM PRODUCTIVITY</span>
+</div>
+<h1 class="font-display text-on-surface text-4xl md:text-5xl lg:text-7xl mb-6 max-w-4xl tracking-tight leading-tight mix-blend-darken animate-fade-in-up" style="animation-delay: 0.1s;">
+        켜두면 오늘의 <br class="hidden md:block"/><span class="text-primary italic font-headline-lg lg:text-7xl">순수 공부시간</span>이 쌓인다
+      </h1>
+<p class="font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-12 text-lg md:text-xl opacity-90 animate-fade-in-up" style="animation-delay: 0.2s;">
+        밥 먹은 시간, 딴짓한 시간은 빼고. 나만 보는 브라우저 타이머.
+      </p>
+<div class="flex flex-col sm:flex-row items-center gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.3s;">
+<a class="bg-primary text-on-primary font-label-ui px-8 py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 group overflow-hidden relative" href="PureStudy.html">
+<span class="relative z-10">타이머 열기</span>
+<span class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-0"></div>
+</a>
+<a class="bg-surface text-on-surface font-label-ui px-8 py-4 rounded-xl border border-outline/20 hover:bg-surface-container-low transition-colors duration-300" href="#why">
+          더 알아보기
+        </a>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent z-10"></div>
+</section>
+<!-- =====================================================
+     왜 순공인가 — 기능을 나열하기 전에 문제부터 말한다.
+     PRD §2: "절대값만으로는 어떤 감정도 발생하지 않는다"
+     히어로 하단 그라디언트가 background로 떨어지므로 이 섹션이 그 색을 받는다.
+     -mt-16으로 16px 파고들어 이음새를 지운다 (원래 #about이 하던 역할) -->
+<section class="py-section-padding-lg bg-background relative z-20 -mt-16" id="why">
+<div class="max-w-container-max mx-auto px-margin-mobile">
+<div class="text-center mb-16" data-reveal="">
+<span class="font-caption-caps text-caption-caps text-primary">WHY 순공</span>
+<h2 class="font-headline-lg text-headline-lg text-on-background mt-3 mb-5">숫자 하나로는 아무 일도 일어나지 않는다</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto opacity-90">
+        오늘 3시간 42분. 이 숫자만 보면 잘한 건지 못한 건지 알 수 없습니다.
+        어제보다 48분 더 했다는 걸 알 때, 비로소 내일 책상에 앉을 이유가 생깁니다.
+      </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-gutter items-center" data-reveal="" data-reveal-delay="0.15s">
+<!-- 죽은 숫자 -->
+<div class="rounded-2xl p-8 border border-outline/10 bg-surface-container-low/50 flex flex-col items-center text-center min-h-[240px] justify-center">
+<span class="font-caption-caps text-on-surface-variant/70 tracking-[0.12em] text-xs mb-6">숫자만 있을 때</span>
+<div class="font-display text-5xl md:text-6xl text-on-surface-variant opacity-40 tabular-nums tracking-tighter">3:42:00</div>
+<p class="font-body-md text-on-surface-variant/70 mt-6">아무 감정도 생기지 않습니다</p>
+</div>
+<!-- 사이의 화살표 — 좁은 화면에선 카드가 세로로 쌓이므로 숨긴다 -->
+<div class="hidden md:flex items-center justify-center text-outline/40 px-2" aria-hidden="true">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 12h15M13 6l6 6-6 6"></path>
+</svg>
+</div>
+<!-- 살아난 숫자 -->
+<div class="rounded-2xl p-8 border border-primary/20 bg-surface flex flex-col items-center text-center min-h-[240px] justify-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none"></div>
+<span class="font-caption-caps text-primary tracking-[0.12em] text-xs mb-6 relative z-10">기준과 함께일 때</span>
+<div class="font-display text-5xl md:text-6xl text-on-surface tabular-nums tracking-tighter relative z-10">3:42:00</div>
+<div class="flex flex-wrap items-center justify-center gap-2 mt-4 relative z-10">
+<span class="inline-flex items-center gap-1 bg-primary/10 text-primary font-label-ui text-xs px-3 py-1.5 rounded-full tabular-nums">어제 +48분</span>
+<span class="inline-flex items-center gap-1 bg-primary/10 text-primary font-label-ui text-xs px-3 py-1.5 rounded-full tabular-nums">7일 평균 +12분</span>
+</div>
+<p class="font-body-md text-on-surface-variant mt-6 relative z-10">여기서 다음 공부가 시작됩니다</p>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant text-center max-w-2xl mx-auto mt-16 opacity-80" data-reveal="" data-reveal-delay="0.3s">
+      순공은 '순수 공부시간'의 줄임말입니다. 밥 먹고 자리를 뜬 시간을 빼는 것 —
+      일시정지 버튼이 존재하는 이유이자, 이 타이머의 전부입니다.
+    </p>
+</div>
+</section>
+<section class="py-section-padding-lg bg-background relative" id="about">
+<div class="max-w-container-max mx-auto px-margin-mobile">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-5 relative z-10">
+<div class="sticky top-32">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">공부한 시간이 아니라, <br/><span class="text-primary">집중한 시간</span>을 셉니다</h2>
+<p class="font-body-md text-on-surface-variant mb-8 opacity-80">
+              Deep Focus를 위한 설계. 시각적 노이즈를 제거하고 오직 타이머에만 집중할 수 있는 환경을 제공합니다.
+            </p>
+<div class="flex flex-col gap-6">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-sm">schedule</span>
+</div>
+<div>
+<h3 class="font-headline-md text-base mb-1">직관적인 흐름</h3>
+<p class="font-body-md text-on-surface-variant text-sm">복잡한 설정 없이 스페이스바 하나로 타이머를 제어하세요.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 relative">
+<div class="absolute -inset-4 bg-gradient-to-br from-surface-container-high via-surface to-surface-container rounded-3xl -z-10 blur-xl opacity-50"></div>
+<div class="bg-surface rounded-2xl p-8 md:p-12 border border-outline/10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] transition-shadow duration-500">
+<div class="absolute top-0 right-0 p-6 opacity-10 font-display text-9xl text-on-surface select-none pointer-events-none group-hover:scale-110 transition-transform duration-700 ease-out">00</div>
+<div class="flex flex-col items-center justify-center min-h-[300px]">
+<div class="font-display text-6xl md:text-8xl text-on-background tracking-tighter mb-4 tabular-nums" id="demo-timer">
+                02:45:12
+              </div>
+<div class="font-caption-caps text-on-surface-variant tracking-widest text-sm bg-surface-container-low px-4 py-2 rounded-full">
+                TODAY'S PURE FOCUS
+              </div>
+</div>
+<svg class="absolute bottom-0 left-0 w-full h-24 text-primary/10" preserveAspectRatio="none" viewBox="0 0 100 100">
+<path d="M0,100 C30,80 70,80 100,100 L100,100 L0,100 Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-section-padding-lg bg-surface-container-lowest border-y border-outline/5 relative" id="features">
+<div class="max-w-container-max mx-auto px-margin-mobile">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">단순하지만 강력한 핵심 기능</h2>
+<p class="font-body-md text-on-surface-variant max-w-xl mx-auto">기록에 얽매이지 마세요. 순공은 당신이 공부에만 몰입할 수 있도록 돕습니다.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature 1 -->
+<div class="group bg-surface rounded-2xl p-8 border border-outline/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden flex flex-col h-full">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors duration-300">
+<span class="material-symbols-outlined">filter_alt</span>
+</div>
+<h3 class="font-headline-md text-lg mb-3">순수 시간만 기록</h3>
+<p class="font-body-md text-on-surface-variant text-sm flex-grow">
+            타이머를 멈추는 순간, 집중력의 누수를 방지합니다. 당신의 진짜 공부 시간을 확인하세요.
+          </p>
+<div class="mt-6 pt-6 border-t border-outline/10">
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="group bg-surface rounded-2xl p-8 border border-outline/10 hover:border-secondary/30 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden flex flex-col h-full md:-mt-8 md:mb-8 shadow-sm hover:shadow-lg">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center mb-6 group-hover:bg-secondary group-hover:text-on-secondary transition-colors duration-300">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<h3 class="font-headline-md text-lg mb-3">항상 비교와 함께</h3>
+<p class="font-body-md text-on-surface-variant text-sm flex-grow">
+            어제보다 나은 오늘. 직관적인 차트로 과거의 나와 현재의 나를 비교하며 동기를 부여받으세요.
+          </p>
+<div class="mt-6 pt-6 border-t border-outline/10 flex items-end gap-2 h-16">
+<div class="w-1/3 bg-surface-container h-1/2 rounded-t-sm"></div>
+<div class="w-1/3 bg-primary-fixed-dim h-3/4 rounded-t-sm"></div>
+<div class="w-1/3 bg-primary h-full rounded-t-sm"></div>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="group bg-surface rounded-2xl p-8 border border-outline/10 hover:border-tertiary/30 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden flex flex-col h-full">
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary/5 rounded-bl-full -z-10 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center mb-6 group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors duration-300">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<h3 class="font-headline-md text-lg mb-3">내 브라우저 안에만</h3>
+<p class="font-body-md text-on-surface-variant text-sm flex-grow">
+            서버에 데이터를 저장하지 않습니다. 오직 당신의 로컬 브라우저에서만 안전하게 관리되는 개인 기록.
+          </p>
+<div class="mt-6 pt-6 border-t border-outline/10 flex items-center justify-between text-xs text-on-surface-variant font-mono">
+<span>local_storage</span>
+<span class="material-symbols-outlined text-sm text-green-600">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fade-in-up {
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+  </style>
+<script>
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // 움직임을 줄여달라고 한 사용자에게는 배경 영상을 틀지 않는다 (CSS로 숨기는 것만으로는 계속 재생된다)
+    if (calm) {
+      const bg = document.getElementById('hero-video');
+      if (bg) { bg.pause(); bg.removeAttribute('autoplay'); bg.hidden = true; }
+    }
+
+    // 화면에 들어올 때 페이드업. 히어로의 animate-fade-in-up은 로드 즉시 돌아서
+    // 아래쪽 섹션에 쓰면 사용자가 도착하기 전에 끝나 있다.
+    // 숨기는 일(.reveal)을 JS가 하므로, JS가 죽으면 아무것도 숨겨지지 않는다.
+    if (!calm && 'IntersectionObserver' in window) {
+      const targets = document.querySelectorAll('[data-reveal]');
+      targets.forEach((el) => el.classList.add('reveal'));
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target;
+          el.style.animationDelay = el.dataset.revealDelay || '0s';
+          el.classList.add('animate-fade-in-up');
+          io.unobserve(el);
+        });
+      }, { rootMargin: '0px 0px -12% 0px' });
+
+      targets.forEach((el) => io.observe(el));
+    }
+
+    // Simple blinking colon effect for the demo timer
+    setInterval(() => {
+      const timer = document.getElementById('demo-timer');
+      if(timer) {
+        if(timer.innerHTML.includes(':')) {
+           timer.innerHTML = timer.innerHTML.replace(/:/g, '<span class="opacity-30">:</span>');
+        } else {
+           timer.innerHTML = timer.innerHTML.replace(/<span class="opacity-30">(:)<\/span>/g, ':');
+        }
+      }
+    }, 1000);
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-section-padding-sm"><div class="max-w-[960px] mx-auto px-margin-mobile flex flex-col items-center md:items-start gap-2"><span class="font-headline-md text-on-surface">순공</span><p class="text-on-surface-variant font-body-md">© 2024 Pure Study Time. All rights reserved.</p></div></footer></body></html>

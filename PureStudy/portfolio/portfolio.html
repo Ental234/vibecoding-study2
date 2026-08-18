@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>박승호 - 포트폴리오</title>
+<link rel="stylesheet" href="portfolio.css">
+</head>
+<body>
+
+<nav class="page-nav">
+  <a href="#hobby">취미</a>
+  <a href="#career">경력</a>
+  <a href="#contact">메일</a>
+</nav>
+
+<header class="hero">
+  <p class="hero-eyebrow">PORTFOLIO</p>
+  <h1 class="hero-name">박승호</h1>
+  <p class="hero-desc">배우는 것을 즐기는 대학생입니다.</p>
+</header>
+
+<main>
+  <section class="hobby-section" id="hobby">
+    <h2 class="section-title">Hobby</h2>
+    <div class="hobby-showcase">
+
+      <aside class="side-card about-card">
+        <h3>About Me</h3>
+        <ul>
+          <li>✨ 새로운 것을 배우는 데 두려움이 없어요</li>
+          <li>🤝 협업과 소통을 중요하게 생각해요</li>
+          <li>🎯 맡은 일은 끝까지 책임지고 완성해요</li>
+        </ul>
+      </aside>
+
+      <div class="hobby-carousel-wrap">
+        <button type="button" class="hobby-nav-btn prev" id="hobbyPrevBtn" aria-label="이전 취미">‹</button>
+
+        <div class="hobby-carousel" id="hobbyCarousel">
+          <div class="hobby-track" id="hobbyTrack">
+
+            <article class="hobby-card">
+              <div class="hobby-icon">🎮</div>
+              <h3 class="hobby-title">게임</h3>
+              <p class="hobby-desc">새로운 세계를 탐험하며<br>전략적으로 사고하는 걸 좋아해요.</p>
+            </article>
+
+            <article class="hobby-card">
+              <div class="hobby-icon">📚</div>
+              <h3 class="hobby-title">독서</h3>
+              <p class="hobby-desc">다양한 분야의 책을 읽으며<br>생각의 폭을 넓히고 있어요.</p>
+            </article>
+
+            <article class="hobby-card">
+              <div class="hobby-icon">🎵</div>
+              <h3 class="hobby-title">음악</h3>
+              <p class="hobby-desc">여러 장르의 음악을 들으며<br>영감과 휴식을 얻어요.</p>
+            </article>
+
+          </div>
+          <div class="hobby-dots" id="hobbyDots"></div>
+        </div>
+
+        <button type="button" class="hobby-nav-btn next" id="hobbyNextBtn" aria-label="다음 취미">›</button>
+      </div>
+
+      <aside class="side-card skills-card">
+        <h3>Skills &amp; Interests</h3>
+        <div class="tag-list">
+          <span class="tag">HTML</span>
+          <span class="tag">CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">Python</span>
+          <span class="tag">Git</span>
+          <span class="tag">Figma</span>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <section class="career-section" id="career">
+    <h2 class="section-title">Career</h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <div class="timeline-content">
+          <span class="timeline-date">2023.03</span>
+          <h3>OO대학교 컴퓨터공학과 입학</h3>
+          <p>새로운 배움에 대한 기대를 안고 대학 생활을 시작했어요.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <div class="timeline-content">
+          <span class="timeline-date">2024.08</span>
+          <h3>정보처리기사 필기 합격</h3>
+          <p>전공 지식을 체계적으로 정리하며 자격증 취득을 준비했어요.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <div class="timeline-content">
+          <span class="timeline-date">2025.06</span>
+          <h3>교내 해커톤 대상 수상</h3>
+          <p>팀 프로젝트로 웹 서비스를 기획·개발하며 협업 경험을 쌓았어요.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <span class="timeline-dot"></span>
+        <div class="timeline-content">
+          <span class="timeline-date">2026.02</span>
+          <h3>OO대학교 컴퓨터공학과 졸업 (예정)</h3>
+          <p>배운 것을 실무에서 이어가기 위한 다음 단계를 준비하고 있어요.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<section class="contact-section" id="contact">
+  <a class="email-btn" href="mailto:sengho9085@gmail.com">
+    <span class="email-icon">✉</span>
+    <span class="email-text">메일 보내기</span>
+  </a>
+</section>
+
+<footer class="page-footer">
+  <p>&copy; 2026 Park Seungho. All rights reserved.</p>
+</footer>
+
+<script src="portfolio.js" defer></script>
+</body>
+</html>

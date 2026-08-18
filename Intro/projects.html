@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A1815">
+<meta name="color-scheme" content="dark">
+<title>Projects — Project Hub</title>
+<style>
+  :root {
+    --bg: #1A1815;
+    --surface: #232019;
+    --surface-hover: #2A261E;
+    --text: #F0EDE7;
+    --text-sub: #8A857E;
+    --accent: #D98A66;
+    --accent-hover: #C97B5A;
+    --border: #302B24;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  /* ---------- 상단 헤더 ---------- */
+  .head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-bottom: 28px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .head__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .head__back:hover { color: var(--accent); }
+
+  .head__back span { transition: transform 0.2s ease; }
+  .head__back:hover span { transform: translateX(-3px); }
+
+  .head__title {
+    font-size: clamp(26px, 5vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 14px 0 0;
+  }
+
+  .head__count {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: var(--text-sub);
+    padding-bottom: 6px;
+  }
+
+  /* ---------- 카드 그리드 ---------- */
+  /* auto-fill + minmax 로 화면 폭에 따라 열 수가 자동 조절됨
+     (넓은 데스크톱 3~4열 / 태블릿 2열 / 모바일 1열) */
+  .grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    /* 자식 카드들이 3D로 기울 수 있도록 원근을 부여 */
+    perspective: 1000px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    will-change: transform;
+    /* DESIGN §6 — 확대/튀어오름 없이 밝기와 테두리 색만 변화
+       (기울기는 아래 JS에서 GSAP이 담당) */
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+  }
+
+  /* 기울일 때 빛이 스치는 느낌 — 커서 위치를 따라 이동 */
+  .card__sheen {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      circle 200px at var(--mx, 50%) var(--my, 50%),
+      rgba(240, 237, 231, 0.09),
+      transparent 65%
+    );
+    transition: opacity 0.3s ease;
+  }
+
+  .card:hover .card__sheen { opacity: 1; }
+
+  .card:hover,
+  .card:focus-visible {
+    background: var(--surface-hover);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .card__thumb {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+    background: var(--border);
+  }
+
+  /* 썸네일 이미지가 아직 없을 때 쓰는 대체 블록 */
+  .card__thumb--placeholder {
+    display: flex;
+    align-items: flex-end;
+    padding: 14px 16px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(240, 237, 231, 0.55);
+  }
+
+  .card__body { padding: 18px 20px 20px; }
+
+  .card__title {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0;
+    transition: color 0.25s ease;
+  }
+
+  .card:hover .card__title { color: var(--accent); }
+
+  .card__desc {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-sub);
+    margin: 8px 0 0;
+  }
+
+  .card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .card__tag {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+
+  /* ---------- 커서 잔상 (인트로와 동일) ---------- */
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 16px rgba(217, 138, 102, 0.45);
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+    will-change: transform;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .cursor-dot { display: none; }
+  }
+
+  /* GSAP이 없어도 화면이 보이도록 하는 기본 등장 */
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .gsap-ready .fade-up { animation: none; opacity: 1; transform: none; }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 32px 20px 72px; }
+    .head { align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up { animation: none; opacity: 1; transform: none; }
+    .cursor-dot { display: none; }
+    .card, .card__title, .head__back span { transition: none; }
+    .card__sheen { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <header class="head fade-up">
+      <div>
+        <a class="head__back" href="index.html"><span>←</span> Project Hub</a>
+        <h1 class="head__title">Projects</h1>
+      </div>
+      <p class="head__count" id="count"></p>
+    </header>
+
+    <main class="grid fade-up" id="grid"></main>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script>
+/* ============================================================
+   프로젝트 데이터
+   여기에 항목만 추가하면 카드가 자동으로 늘어납니다.
+
+   thumbnail: 이미지 파일 경로. 아직 이미지가 없으면
+              빈 문자열("")로 두세요 — 자동으로 대체 블록이 그려집니다.
+   tags:      선택 항목. 없으면 생략해도 됩니다.
+   ============================================================ */
+var projects = [
+  {
+    id: "purestudy",
+    title: "순공",
+    description: "켜두면 오늘의 순수 공부시간이 쌓이는, 나만 보는 브라우저 타이머.",
+    thumbnail: "",
+    url: "../PureStudy/index.html",
+    tags: ["웹앱", "타이머", "localStorage"]
+  },
+  {
+    id: "foodreview",
+    title: "FoodReview",
+    description: "다녀온 맛집을 별점 한 줄로 남기고, 태그와 지역으로 다시 찾는 리뷰 서비스.",
+    thumbnail: "",
+    url: "../FoodReview/index.html",
+    tags: ["웹앱", "리뷰", "랜딩"]
+  }
+
+  /* 프로젝트를 추가할 때는 위 형식을 그대로 복사해서 쓰세요.
+     항목 사이에는 쉼표(,)를 넣어야 합니다.
+
+  ,{
+    id: "project-02",
+    title: "프로젝트 제목",
+    description: "한두 줄 설명.",
+    thumbnail: "./assets/thumb-02.webp",   // 없으면 "" 로 두세요
+    url: "https://example.com",
+    tags: ["태그1", "태그2"]               // 없으면 이 줄을 지우세요
+  }
+  */
+];
+
+(function () {
+  var grid = document.getElementById('grid');
+  var dot = document.getElementById('cursorDot');
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var hasGsap = typeof window.gsap !== 'undefined';
+
+  /* 썸네일이 없을 때 쓰는 배경 — 팔레트 안에서만 변주 */
+  var placeholders = [
+    'linear-gradient(135deg, #2A261E, #191A3E)',
+    'linear-gradient(135deg, #302B24, #23201A)',
+    'linear-gradient(135deg, #191A3E, #2A1B24)',
+    'linear-gradient(135deg, #2A261E, #3A2A20)',
+    'linear-gradient(135deg, #1F2140, #262019)',
+    'linear-gradient(135deg, #33291F, #1D1B2E)'
+  ];
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---------- 카드 렌더링 ---------- */
+  document.getElementById('count').textContent =
+    String(projects.length).padStart(2, '0') + ' PROJECTS';
+
+  var html = projects.map(function (p, i) {
+    var thumb = p.thumbnail
+      ? '<img class="card__thumb" src="' + esc(p.thumbnail) + '" alt="" loading="lazy">'
+      : '<div class="card__thumb card__thumb--placeholder" style="background:' +
+        placeholders[i % placeholders.length] + '">' +
+        String(i + 1).padStart(2, '0') + '</div>';
+
+    var tags = (p.tags && p.tags.length)
+      ? '<div class="card__tags">' + p.tags.map(function (t) {
+          return '<span class="card__tag">' + esc(t) + '</span>';
+        }).join('') + '</div>'
+      : '';
+
+    return '' +
+      '<a class="card" href="' + esc(p.url) + '" target="_blank" rel="noopener noreferrer">' +
+        thumb +
+        '<div class="card__body">' +
+          '<h2 class="card__title">' + esc(p.title) + '</h2>' +
+          '<p class="card__desc">' + esc(p.description) + '</p>' +
+          tags +
+        '</div>' +
+        '<span class="card__sheen" aria-hidden="true"></span>' +
+      '</a>';
+  }).join('');
+
+  grid.innerHTML = html;
+
+  /* 이미지 경로가 잘못됐을 때도 카드가 깨지지 않도록 대체 블록으로 교체 */
+  Array.prototype.forEach.call(grid.querySelectorAll('img.card__thumb'), function (img, i) {
+    img.addEventListener('error', function () {
+      var div = document.createElement('div');
+      div.className = 'card__thumb card__thumb--placeholder';
+      div.style.background = placeholders[i % placeholders.length];
+      div.textContent = String(i + 1).padStart(2, '0');
+      img.replaceWith(div);
+    });
+  });
+
+  if (!hasGsap || reduceMotion) return;
+
+  document.body.classList.add('gsap-ready');
+
+  /* ---------- 등장 애니메이션 ---------- */
+  var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  tl.from('.head', { y: 12, opacity: 0, duration: 0.6 })
+    .from('.card', {
+      y: 16,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.06
+    }, '-=0.35');
+
+  if (!finePointer) return;
+
+  /* ---------- 카드 3D 기울기 (pointer move) ----------
+     MAX_TILT: 최대 기울기 각도. 크게 잡을수록 장난감 같아지므로
+               미니멀 톤에서는 6~8도 정도가 상한입니다. */
+  var MAX_TILT = 7;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.card'), function (card) {
+    var sheen = card.querySelector('.card__sheen');
+    var rotX, rotY;
+
+    /* 카드에 들어올 때마다 quickTo 를 새로 만든다.
+       나갈 때 쓰는 복귀 트윈이 overwrite 로 기존 quickTo 트윈을 죽이기 때문에,
+       한 번 죽은 것을 계속 쓰면 두 번째 진입부터 기울기가 먹지 않는다. */
+    function makeQuick() {
+      rotX = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3' });
+      rotY = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3' });
+    }
+
+    card.addEventListener('pointerenter', makeQuick);
+
+    card.addEventListener('pointermove', function (e) {
+      if (!rotX) makeQuick();  /* 로드 시점에 이미 커서가 카드 위에 있던 경우 대비 */
+
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width;   /* 0(왼쪽) ~ 1(오른쪽) */
+      var py = (e.clientY - r.top) / r.height;   /* 0(위)   ~ 1(아래)   */
+
+      /* 커서가 있는 쪽이 앞으로 나오도록 부호를 맞춤 */
+      rotY((px - 0.5) * 2 * MAX_TILT);
+      rotX(-(py - 0.5) * 2 * MAX_TILT);
+
+      /* 빛 위치도 커서를 따라감 */
+      sheen.style.setProperty('--mx', (px * 100) + '%');
+      sheen.style.setProperty('--my', (py * 100) + '%');
+    });
+
+    card.addEventListener('pointerleave', function () {
+      /* overwrite: true — 위의 quickTo 트윈을 확실히 끊고 복귀시킨다.
+         (없으면 두 트윈이 같은 속성을 두고 다퉈서 복귀가 끊긴다) */
+      gsap.to(card, {
+        rotationX: 0,
+        rotationY: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.5)',
+        overwrite: true
+      });
+    });
+  });
+
+  /* ---------- 커서 잔상 ---------- */
+  gsap.set(dot, { xPercent: -50, yPercent: -50 });
+
+  var dotX = gsap.quickTo(dot, 'x', { duration: 0.5, ease: 'power3' });
+  var dotY = gsap.quickTo(dot, 'y', { duration: 0.5, ease: 'power3' });
+  var shown = false;
+
+  window.addEventListener('mousemove', function (e) {
+    if (!shown) {
+      shown = true;
+      gsap.set(dot, { x: e.clientX, y: e.clientY });
+      gsap.to(dot, { opacity: 0.85, duration: 0.4 });
+    }
+    dotX(e.clientX);
+    dotY(e.clientY);
+  });
+
+  /* 클릭 가능한 요소 위에서는 점이 커지며 옅어짐 (인트로 버튼과 같은 규칙) */
+  Array.prototype.forEach.call(document.querySelectorAll('.card, .head__back'), function (el) {
+    el.addEventListener('mouseenter', function () {
+      gsap.to(dot, { scale: 2.4, opacity: 0.35, duration: 0.3 });
+    });
+    el.addEventListener('mouseleave', function () {
+      gsap.to(dot, { scale: 1, opacity: 0.85, duration: 0.3 });
+    });
+  });
+
+  document.addEventListener('mouseleave', function () {
+    gsap.to(dot, { opacity: 0, duration: 0.3 });
+    shown = false;
+  });
+})();
+</script>
+</body>
+</html>

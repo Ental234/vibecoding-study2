@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>순공 — 오늘의 순수 공부시간</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-error-container":"#93000a","surface-tint":"#0053db","on-tertiary-fixed":"#151c23","tertiary-text":"#9ca3af","surface-container-low":"#f1f3ff","surface-container-highest":"#dce2f7","on-error":"#ffffff","surface":"#f9f9ff","outline-variant":"#c3c6d7","on-secondary-container":"#fffbff","on-primary-container":"#eeefff","tertiary-fixed-dim":"#c0c7d0","on-surface":"#141b2b","on-secondary":"#ffffff","surface-dim":"#d3daef","outline":"#737686","on-primary-fixed":"#00174b","surface-container-lowest":"#ffffff","error":"#ba1a1a","primary-fixed-dim":"#b4c5ff","on-primary-fixed-variant":"#003ea8","tertiary-container":"#676e76","on-secondary-fixed-variant":"#0039b5","inverse-surface":"#293040","tertiary-fixed":"#dce3ec","tertiary":"#4e565d","on-surface-variant":"#434655","on-secondary-fixed":"#001551","on-primary":"#ffffff","surface-variant":"#dce2f7","secondary":"#1d4ed8","inverse-on-surface":"#edf0ff","secondary-fixed":"#dce1ff","on-tertiary-fixed-variant":"#40484f","on-tertiary-container":"#eaf1fa","surface-bright":"#f9f9ff","on-background":"#141b2b","surface-container":"#e9edff","surface-container-high":"#e1e8fd","inverse-primary":"#b4c5ff","border-subtle":"#e5e7eb","primary-fixed":"#dbe1ff","primary-container":"#2563eb","primary":"#004ac6","muted-text":"#4b5563","secondary-container":"#4069f2","secondary-fixed-dim":"#b7c4ff","error-container":"#ffdad6","background":"#f9f9ff","on-tertiary":"#ffffff"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"unit":"8px","gutter":"24px","margin-mobile":"20px","section-padding-sm":"56px","section-padding-lg":"72px","container-max":"960px"},"fontFamily":{"headline-md":["Hanken Grotesk"],"body-md":["Hanken Grotesk"],"display":["Hanken Grotesk"],"label-ui":["Hanken Grotesk"],"headline-lg":["Hanken Grotesk"],"display-mobile":["Hanken Grotesk"],"caption-caps":["Hanken Grotesk"],"body-lg":["Hanken Grotesk"]},"fontSize":{"headline-md":["24px",{"lineHeight":"1.4","letterSpacing":"0","fontWeight":"700"}],"body-md":["15px",{"lineHeight":"1.7","letterSpacing":"0","fontWeight":"400"}],"display":["52px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"800"}],"label-ui":["16px",{"lineHeight":"1","letterSpacing":"0","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"1.4","letterSpacing":"-0.01em","fontWeight":"800"}],"display-mobile":["32px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"800"}],"caption-caps":["14px",{"lineHeight":"1.7","letterSpacing":"0.12em","fontWeight":"700"}],"body-lg":["18px",{"lineHeight":"1.7","letterSpacing":"0","fontWeight":"400"}]}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+/* 웹폰트를 받아오지 않는다(오프라인). 설치되어 있으면 쓰고, 아니면 시스템 한글 폰트로 떨어진다.
+   Hanken Grotesk에는 한글 글리프가 없으므로 뒤를 반드시 받쳐 둔다 */
+body {
+  font-family: "Hanken Grotesk", "Pretendard Variable", Pretendard, -apple-system,
+               BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+}
+
+/* 시안이 쓰는 rounded-DEFAULT는 Tailwind가 만들지 않는 이름이다(DEFAULT 키는 .rounded로 나온다) */
+.rounded-DEFAULT { border-radius: 0.25rem; }
+
+/* 스크롤해야 보이는 요소의 등장 연출.
+   opacity:0은 JS가 .reveal을 붙였을 때만 걸린다 — JS가 죽으면 그냥 보인다 */
+.reveal { opacity: 0; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-fade-in-up { animation: none; opacity: 1; }
+}
+</style>
+</head>

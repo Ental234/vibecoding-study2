@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>순공</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={theme:{extend:{"colors":{"secondary-fixed-dim":"#ffb68c","surface-container-lowest":"#ffffff","error":"#ba1a1a","paper-card":"#FFFDF8","inverse-surface":"#352f28","surface-tint":"#605e59","surface-variant":"#ece1d5","sage":"#93A184","secondary-container":"#fe9f64","on-background":"#201b14","surface-container":"#f7ece0","cocoa":"#6F5643","surface-container-low":"#fdf2e6","on-secondary":"#ffffff","secondary-fixed":"#ffdbc9","on-error-container":"#93000a","primary-fixed-dim":"#c9c600","ink-primary":"#3A342C","on-primary-fixed-variant":"#484742","mustard":"#BC9A4A","on-primary-container":"#72706b","on-primary":"#ffffff","secondary":"#944a17","surface-dim":"#e3d8cd","terracotta":"#C17A5C","on-error":"#ffffff","on-surface":"#201b14","on-surface-variant":"#484740","surface-container-high":"#f2e6db","inverse-primary":"#c9c6c0","tertiary-fixed":"#d7eaa5","tertiary-container":"#ecffb7","on-tertiary-fixed":"#151f00","primary-container":"#faf6ef","outline-variant":"#c9c6bd","on-tertiary-fixed-variant":"#3d4c17","stop-ink":"#93432F","on-secondary-fixed":"#321200","outline":"#79776f","rose":"#BD8188","paper-bg":"#FAF6EF","surface":"#fff8f3","border-sep":"#E5DCCC","indigo":"#5F6E8C","on-tertiary-container":"#67773d","tertiary-fixed-dim":"#bcce8b","primary-fixed":"#e6e2db","ink-muted":"#8A8073","on-tertiary":"#ffffff","surface-container-highest":"#ece1d5","olive":"#A0A06A","background":"#fff8f3","primary":"#605e59","clay":"#B08468","on-secondary-fixed-variant":"#753400","error-container":"#ffdad6","on-secondary-container":"#763400","surface-bright":"#fff8f3","on-primary-fixed":"#1c1c18","inverse-on-surface":"#faefe3","tertiary":"#54642d","ink-whisper":"#D1CDC7","stop-fill":"#F7E7E1"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"s3":"24px","s6":"48px","s4":"32px","s2":"16px","s1":"8px","s5":"40px","unit":"8px","s8":"64px","max-width":"880px"},"fontFamily":{"timer-display":["Hanken Grotesk"],"label-caption":["Hanken Grotesk"],"body-main":["Hanken Grotesk"],"button-text":["Hanken Grotesk"],"headline-title":["Hanken Grotesk"]},"fontSize":{"timer-display":["64px",{"lineHeight":"1.1","letterSpacing":"-0.02em","fontWeight":"600"}],"label-caption":["13px",{"lineHeight":"1.2","fontWeight":"400"}],"body-main":["15px",{"lineHeight":"1.6","fontWeight":"400"}],"button-text":["15px",{"lineHeight":"1.0","fontWeight":"600"}],"headline-title":["20px",{"lineHeight":"1.4","letterSpacing":"-0.02em","fontWeight":"700"}]}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+/* =========================================================
+   시안(Sungong Paper Essence)에 없는 것만 여기서 채운다.
+   1) 한글 — Hanken Grotesk에는 한글 글리프가 없다. 폴백을 명시한다.
+   2) 러너 캐릭터 애니메이션 — 유틸리티로 표현할 수 없는 키프레임.
+   3) 다크 팔레트 — 시안은 라이트 전용이라 사용된 유틸리티만 덮어쓴다.
+   ========================================================= */
+
+/* 웹폰트를 받아오지 않는다(오프라인). 설치되어 있으면 쓰고, 아니면 시스템 한글 폰트로 떨어진다.
+   Hanken Grotesk에는 한글 글리프가 없으므로 뒤를 반드시 받쳐 둔다 */
+body {
+  font-family: "Hanken Grotesk", "Pretendard Variable", Pretendard, -apple-system,
+               BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+}
+
+/* 시안이 쓰는 rounded-DEFAULT는 Tailwind가 만들지 않는 이름이다(DEFAULT 키는 .rounded로 나온다).
+   시안 마크업을 그대로 두고 의도한 4px만 살린다 */
+.rounded-DEFAULT { border-radius: 0.25rem; }
+
+[hidden] { display: none !important; }
+
+/* 브라우저가 그리는 것들(select 드롭다운 팝업, 스크롤바, 기본 폼 컨트롤)은
+   페이지 CSS 밖에 있다. 이걸 알려주지 않으면 다크에서도 팝업만 밝은 바탕으로 그려져
+   밝은 글자가 묻힌다 — 호버로 하이라이트가 깔릴 때만 보이게 된다. */
+:root { color-scheme: light; }
+
+/* 과목 8색. 저장된 기록이 색을 토큰 이름(--subj-N)으로 참조하므로 이름을 유지한다.
+   값은 시안 팔레트(rose·indigo·mustard·sage·clay·terracotta·olive·cocoa)와 같다 */
+:root {
+  --subj-1: #C17A5C;  /* 테라코타 */
+  --subj-2: #A0A06A;  /* 올리브   */
+  --subj-3: #BC9A4A;  /* 머스터드 */
+  --subj-4: #93A184;  /* 세이지   */
+  --subj-5: #B08468;  /* 클레이   */
+  --subj-6: #5F6E8C;  /* 인디고   */
+  --subj-7: #BD8188;  /* 로즈     */
+  --subj-8: #6F5643;  /* 코코아   */
+  --whisper: #D1CDC7; /* 미분류 · 일시정지 */
+}
+
+/* 숫자가 매초 흔들리지 않게 (DESIGN.md §Typography — tabular-nums 필수) */
+.tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* 시안의 요일 막대는 하드코딩된 7개였다. 기록에서 그리는 쪽으로 바꾸며
+   열이 균등 폭을 갖도록 한 줄만 보탠다 */
+#week-bars > .bar-col { flex: 1 1 0%; }
+
+/* --- 러너 (DESIGN.md §The Runner) ---
+   시안은 1px 트랙 위의 원형 마커였지만, 그 자리에 제품의 캐릭터가 선다.
+   위치 이동은 JS가 transform으로 잡으므로 유틸리티 transform을 걸지 않는다. */
+.ready #runner-layer,
+.ready #result-runner-layer { transition: transform 1s linear; }
+#result-runner-layer { transition: transform 1.2s cubic-bezier(.32, .72, .38, 1) !important; }
+
+.runner-svg { display: block; width: 100%; height: auto; }
+
+@keyframes legFrameA { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes legFrameB { 0%, 49% { opacity: 0 } 50%, 100% { opacity: 1 } }
+.legs-b { opacity: 0; }
+.runner.is-running .legs-a { animation: legFrameA .3s infinite; }
+.runner.is-running .legs-b { animation: legFrameB .3s infinite; }
+
+@keyframes hop { 0%, 100% { transform: translateY(0) } 40% { transform: translateY(-9px) } }
+.celebrate .runner-svg { animation: hop .6s ease-out 2; }
+
+/* 목표를 넘긴 순간 트랙과 캐릭터가 달성색으로 넘어간다 */
+.is-done .runner { color: #944a17; }
+.is-done #bar-fill { background-color: #944a17; }
+
+/* 과목이 바뀌는 순간 한 번 부풀렸다 돌아온다 */
+@keyframes dot-pop { 0% { transform: scale(1) } 40% { transform: scale(2) } 100% { transform: scale(1) } }
+.switched { animation: dot-pop .45s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .runner.is-running .legs-a,
+  .runner.is-running .legs-b,
+  .celebrate .runner-svg,
+  .switched { animation: none; }
+}
+
+/* --- 다크 팔레트 ---
+   시안은 라이트 전용이다. 토큰 값은 시안 그대로 두고,
+   실제로 쓰인 유틸리티만 여기서 덮어쓴다.
+   "저대비 종이" 감각을 유지하려 순검정 대신 따뜻한 목탄을 쓴다. */
+/*DARK*/
+
+[data-theme="dark"] { --whisper: #6A6156; color-scheme: dark; }
+[data-theme="dark"] dialog::backdrop { background: rgba(0, 0, 0, .6); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --whisper: #6A6156; color-scheme: dark; }
+  :root:not([data-theme="light"]) dialog::backdrop { background: rgba(0, 0, 0, .6); }
+}
+</style>
+</head>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>FoodReview — 다녀온 맛집, 한 줄로 남기세요</title>
+<meta name="description" content="광고 없는 리뷰만 모은 맛집 리뷰 서비스. 다녀온 가게에 별점과 한 줄을 남기고, 다른 사람의 최근 리뷰로 다음에 갈 곳을 고르세요.">
+
+<!-- 본문 폰트: Pretendard -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<!-- 제목 폰트: Gaegu (손글씨) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // DESIGN.md §13.2 토큰을 그대로 이식
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#FAF7F2',
+          card:  '#FFFDF8',
+          ink:   { DEFAULT: '#1A1815', 2: '#57514A', 3: '#6F675E', disabled: '#A79E93' },
+          line:  { DEFAULT: '#E6E0D6', strong: '#948A7D' },
+          brand: { DEFAULT: '#F7E600', press: '#DCC900', ink: '#7A6B00', wash: '#FDF8CC' },
+          danger: '#B3261E',
+          success: '#2E7D32',
+        },
+        fontFamily: {
+          sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'],
+          hand: ['Gaegu', 'Pretendard Variable', 'cursive'],
+        },
+        maxWidth:     { landing: '1120px' },
+        borderRadius: { card: '16px', control: '12px' },
+        boxShadow:    { float: '0 2px 8px rgba(60,50,35,.08)' },
+      }
+    }
+  };
+  document.documentElement.classList.add('js');
+</script>
+
+<style>
+  /* ── 종이결 (DESIGN §6.1) ───────────────────────────── */
+  body {
+    background-color: #FAF7F2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  }
+
+  /* ── 포커스 링: 노랑은 대비가 낮아 쓰지 않는다 (DESIGN §12) ── */
+  :focus-visible { outline: 2px solid #1A1815; outline-offset: 2px; border-radius: 4px; }
+
+  /* ── 리뷰 티커 (DESIGN §10.4) ───────────────────────── */
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ticker-track { animation: ticker 40s linear infinite; }
+  .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+  .ticker-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+            mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+  }
+
+  /* ── 섹션 진입 (DESIGN §11) ─────────────────────────── */
+  .js .reveal { opacity: 0; transform: translateY(12px); transition: opacity .4s ease-out, transform .4s ease-out; }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+
+  /* ── 푸터 링크: hover 시 형광펜 (DESIGN §10.6) ───────── */
+  .footer-link {
+    display: inline-flex; align-items: center; height: 44px;
+    padding: 0 8px; margin-left: -8px; border-radius: 4px;
+    font-size: 14px; font-weight: 600;
+    transition: background-color .15s cubic-bezier(.2,0,0,1), color .15s cubic-bezier(.2,0,0,1);
+  }
+  .footer-link:hover, .footer-link:focus-visible { background: #F7E600; color: #1A1815; }
+
+  /* ── 동작 줄이기 (DESIGN §11 · §12) ─────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    .js .reveal { opacity: 1; transform: none; }
+    /* 티커를 멈추고 3개만 세로로 쌓는다.
+       Tailwind CDN이 런타임에 유틸리티를 뒤에 주입하므로 !important로 눌러야 한다 */
+    .ticker-track { animation: none !important; display: block !important; width: 100% !important; }
+    .ticker-track > li { flex-wrap: wrap !important; white-space: normal !important; padding: 6px 24px; }
+    .ticker-track > li:nth-child(n+4) { display: none !important; }
+    .ticker-dot { display: none !important; }
+    .ticker-mask { -webkit-mask-image: none; mask-image: none; }
+  }
+</style>
+</head>
+
+<body class="font-sans text-ink antialiased">
+
+<!-- 별 아이콘 스프라이트 -->
+<svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+  <symbol id="ico-star" viewBox="0 0 24 24">
+    <path d="M12 3l2.82 5.72 6.31.92-4.57 4.45 1.08 6.29L12 17.4l-5.64 2.98 1.08-6.29L2.87 9.64l6.31-.92z"/>
+  </symbol>
+</svg>
+
+<a href="#popular" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-control focus:border-[1.5px] focus:border-ink focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold">본문으로 건너뛰기</a>
+
+<!-- ══════════════════ 상단 바 ══════════════════ -->
+<header id="topbar" class="fixed inset-x-0 top-0 z-50 h-14 transition-colors duration-200">
+  <div class="mx-auto flex h-full max-w-landing items-center justify-between px-6 md:px-10">
+    <span class="font-hand text-[22px] leading-none">FoodReview</span>
+    <button type="button" data-soon
+      class="h-9 rounded-control border-[1.5px] border-ink bg-brand px-4 text-[13px] font-semibold text-ink transition active:translate-y-px active:bg-brand-press">
+      시작하기
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ══════════════════ ① 히어로 ══════════════════ -->
+  <section class="px-6 pb-14 pt-[104px] md:pb-24 md:pt-[152px]">
+    <div class="mx-auto max-w-[640px] text-center">
+
+      <h1 class="font-hand text-[34px] leading-[1.3] md:text-[52px]">
+        <span class="relative inline-block">
+          <span aria-hidden="true" class="absolute inset-x-[-6px] bottom-[10px] h-[32%] -rotate-[1.5deg] rounded-[2px] bg-brand"></span>
+          <span class="relative">다녀온 맛집</span></span>,<br class="sm:hidden">
+        한 줄로 남기세요
+      </h1>
+
+      <p class="mt-4 text-[15px] leading-relaxed text-ink-2 md:text-[18px]">
+        광고 없는 리뷰만 모았습니다
+      </p>
+
+      <form id="heroForm" class="mt-8 space-y-3 text-left">
+        <label for="q" class="sr-only">가게 이름 검색</label>
+        <div class="relative">
+          <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+          </svg>
+          <input id="q" name="q" type="search" autocomplete="off" placeholder="가게 이름을 검색해보세요"
+            class="h-[52px] w-full rounded-full border-[1.5px] border-line-strong bg-card pl-12 pr-4 text-[15px] text-ink transition-colors placeholder:text-ink-3 focus:border-ink focus:bg-brand-wash focus:outline-none">
+        </div>
+        <button type="submit"
+          class="h-[52px] w-full rounded-control border-[1.5px] border-ink bg-brand text-[15px] font-semibold text-ink transition active:translate-y-px active:bg-brand-press">
+          카카오로 시작하기
+        </button>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ ② 인기 맛집 ══════════════════ -->
+  <section id="popular" class="reveal bg-card py-12 md:py-20">
+    <div class="mx-auto max-w-landing px-6 md:px-10">
+
+      <div class="flex items-end justify-between gap-4">
+        <h2 class="font-hand text-[28px] leading-none">지금 인기 있는 곳</h2>
+        <button type="button" data-soon class="-mr-2 h-11 px-2 text-sm font-semibold text-ink-2">전체 보기 →</button>
+      </div>
+
+      <ul class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-5">
+
+        <!-- 청담국밥 -->
+        <li>
+          <button type="button" data-soon class="block w-full overflow-hidden rounded-card border border-line bg-paper text-left transition active:translate-y-px">
+            <div class="aspect-[4/3] bg-brand-wash">
+              <svg viewBox="0 0 400 300" class="h-full w-full" role="img" aria-label="국밥 한 그릇 일러스트">
+                <rect width="400" height="300" fill="#FDF8CC"/>
+                <g fill="none" stroke="#1A1815" stroke-width="5" stroke-linecap="round" opacity=".45">
+                  <path d="M165 100q13-15 0-30t0-26"/>
+                  <path d="M200 92q13-16 0-32t0-28"/>
+                  <path d="M235 100q13-15 0-30t0-26"/>
+                </g>
+                <path d="M96 152C96 214 143 252 200 252s104-38 104-100Z" fill="#F7E600" stroke="#1A1815" stroke-width="7" stroke-linejoin="round"/>
+                <ellipse cx="200" cy="152" rx="104" ry="24" fill="#FFFDF8" stroke="#1A1815" stroke-width="7"/>
+                <g fill="#1A1815" opacity=".7">
+                  <circle cx="173" cy="150" r="8"/><circle cx="213" cy="157" r="6"/><circle cx="239" cy="147" r="5"/>
+                </g>
+                <rect x="164" y="256" width="72" height="10" rx="5" fill="#1A1815"/>
+              </svg>
+            </div>
+            <div class="p-3.5">
+              <p class="font-hand text-[19px] leading-tight">청담국밥</p>
+              <p class="mt-0.5 text-[13px] text-ink-3">서울 강남구 · 한식</p>
+              <p class="mt-2 flex items-center gap-1.5 text-[14px] font-semibold tabular-nums">
+                <svg class="h-3.5 w-3.5" fill="#F7E600" stroke="#1A1815" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><use href="#ico-star"/></svg>
+                4.8 <span class="font-normal text-ink-3">리뷰 14</span>
+              </p>
+            </div>
+          </button>
+        </li>
+
+        <!-- 연남동 파스타바 -->
+        <li>
+          <button type="button" data-soon class="block w-full overflow-hidden rounded-card border border-line bg-paper text-left transition active:translate-y-px">
+            <div class="aspect-[4/3] bg-brand-wash">
+              <svg viewBox="0 0 400 300" class="h-full w-full" role="img" aria-label="파스타 한 접시 일러스트">
+                <rect width="400" height="300" fill="#FDF8CC"/>
+                <ellipse cx="200" cy="162" rx="130" ry="94" fill="#FFFDF8" stroke="#1A1815" stroke-width="7"/>
+                <ellipse cx="200" cy="162" rx="92" ry="62" fill="#F7E600" stroke="#1A1815" stroke-width="5"/>
+                <g fill="none" stroke="#1A1815" stroke-width="5" stroke-linecap="round" opacity=".7">
+                  <ellipse cx="200" cy="156" rx="62" ry="38"/>
+                  <ellipse cx="200" cy="165" rx="40" ry="24"/>
+                  <ellipse cx="200" cy="170" rx="19" ry="10"/>
+                </g>
+                <path d="M247 122q19-15 32 2-19 15-32-2z" fill="#1A1815" opacity=".65"/>
+                <path d="M141 196q-19-15-32 2 19 15 32-2z" fill="#1A1815" opacity=".5"/>
+              </svg>
+            </div>
+            <div class="p-3.5">
+              <p class="font-hand text-[19px] leading-tight">연남동 파스타바</p>
+              <p class="mt-0.5 text-[13px] text-ink-3">서울 마포구 · 양식</p>
+              <p class="mt-2 flex items-center gap-1.5 text-[14px] font-semibold tabular-nums">
+                <svg class="h-3.5 w-3.5" fill="#F7E600" stroke="#1A1815" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><use href="#ico-star"/></svg>
+                4.7 <span class="font-normal text-ink-3">리뷰 11</span>
+              </p>
+            </div>
+          </button>
+        </li>
+
+        <!-- 성수 골목분식 -->
+        <li>
+          <button type="button" data-soon class="block w-full overflow-hidden rounded-card border border-line bg-paper text-left transition active:translate-y-px">
+            <div class="aspect-[4/3] bg-brand-wash">
+              <svg viewBox="0 0 400 300" class="h-full w-full" role="img" aria-label="떡볶이 한 냄비 일러스트">
+                <rect width="400" height="300" fill="#FDF8CC"/>
+                <path d="M80 146C80 210 133 250 200 250s120-40 120-104Z" fill="#F7E600" stroke="#1A1815" stroke-width="7" stroke-linejoin="round"/>
+                <ellipse cx="200" cy="146" rx="120" ry="27" fill="#FFFDF8" stroke="#1A1815" stroke-width="7"/>
+                <g fill="#FFFDF8" stroke="#1A1815" stroke-width="5">
+                  <rect x="146" y="126" width="48" height="20" rx="10" transform="rotate(-12 170 136)"/>
+                  <rect x="200" y="138" width="48" height="20" rx="10" transform="rotate(9 224 148)"/>
+                  <rect x="166" y="152" width="48" height="20" rx="10" transform="rotate(-4 190 162)"/>
+                </g>
+                <g stroke="#1A1815" stroke-width="5" stroke-linecap="round" opacity=".65">
+                  <path d="M256 132h20"/><path d="M132 158h18"/><path d="M262 168h16"/>
+                </g>
+                <rect x="168" y="254" width="64" height="10" rx="5" fill="#1A1815"/>
+              </svg>
+            </div>
+            <div class="p-3.5">
+              <p class="font-hand text-[19px] leading-tight">성수 골목분식</p>
+              <p class="mt-0.5 text-[13px] text-ink-3">서울 성동구 · 분식</p>
+              <p class="mt-2 flex items-center gap-1.5 text-[14px] font-semibold tabular-nums">
+                <svg class="h-3.5 w-3.5" fill="#F7E600" stroke="#1A1815" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><use href="#ico-star"/></svg>
+                4.6 <span class="font-normal text-ink-3">리뷰 23</span>
+              </p>
+            </div>
+          </button>
+        </li>
+
+        <!-- 망원 손만두 -->
+        <li>
+          <button type="button" data-soon class="block w-full overflow-hidden rounded-card border border-line bg-paper text-left transition active:translate-y-px">
+            <div class="aspect-[4/3] bg-brand-wash">
+              <svg viewBox="0 0 400 300" class="h-full w-full" role="img" aria-label="찜기에 담긴 손만두 일러스트">
+                <rect width="400" height="300" fill="#FDF8CC"/>
+                <g fill="none" stroke="#1A1815" stroke-width="5" stroke-linecap="round" opacity=".45">
+                  <path d="M150 88q12-14 0-28t0-24"/>
+                  <path d="M248 88q12-14 0-28t0-24"/>
+                </g>
+                <g fill="#FFFDF8" stroke="#1A1815" stroke-width="6" stroke-linejoin="round">
+                  <path d="M106 152c0-30 22-50 46-50s46 20 46 50Z"/>
+                  <path d="M202 152c0-30 22-50 46-50s46 20 46 50Z"/>
+                </g>
+                <g stroke="#1A1815" stroke-width="4" stroke-linecap="round" opacity=".55">
+                  <path d="M128 152v-22"/><path d="M152 152v-30"/><path d="M176 152v-22"/>
+                  <path d="M224 152v-22"/><path d="M248 152v-30"/><path d="M272 152v-22"/>
+                </g>
+                <rect x="66" y="152" width="268" height="94" rx="16" fill="#F7E600" stroke="#1A1815" stroke-width="7"/>
+                <g stroke="#1A1815" stroke-width="5" opacity=".5">
+                  <path d="M66 184h268"/><path d="M66 216h268"/>
+                </g>
+              </svg>
+            </div>
+            <div class="p-3.5">
+              <p class="font-hand text-[19px] leading-tight">망원 손만두</p>
+              <p class="mt-0.5 text-[13px] text-ink-3">서울 마포구 · 만두</p>
+              <p class="mt-2 flex items-center gap-1.5 text-[14px] font-semibold tabular-nums">
+                <svg class="h-3.5 w-3.5" fill="#F7E600" stroke="#1A1815" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><use href="#ico-star"/></svg>
+                4.5 <span class="font-normal text-ink-3">리뷰 9</span>
+              </p>
+            </div>
+          </button>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════════════ ③ 최근 리뷰 ══════════════════ -->
+  <section class="reveal overflow-hidden py-10 md:py-16">
+    <div class="mx-auto max-w-landing px-6 md:px-10">
+      <h2 class="font-hand text-[28px] leading-none">방금 올라온 리뷰</h2>
+    </div>
+    <div class="ticker-wrap ticker-mask relative mt-5">
+      <ul id="ticker" class="ticker-track flex w-max items-center"></ul>
+    </div>
+  </section>
+
+  <!-- ══════════════════ ④ 서비스 특징 ══════════════════ -->
+  <section class="reveal bg-card py-12 md:py-20">
+    <div class="mx-auto max-w-landing px-6 md:px-10">
+      <h2 class="font-hand text-[28px] leading-none">앞으로 이런 것도 됩니다</h2>
+      <p class="mt-2 text-[13px] text-ink-3">아직 만들지 않은 기능입니다. 순서대로 붙여나갈 예정이에요.</p>
+
+      <ul class="mt-6 grid gap-3 sm:grid-cols-3 md:gap-5">
+
+        <li class="rounded-card border border-dashed border-line-strong bg-paper p-5">
+          <svg class="h-6 w-6 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v3M12 18v3M4.2 7.5l2.6 1.5M17.2 15l2.6 1.5M4.2 16.5l2.6-1.5M17.2 9l2.6-1.5"/><circle cx="12" cy="12" r="3.4"/>
+          </svg>
+          <h3 class="mt-3 text-[15px] font-semibold">AI 리뷰 요약</h3>
+          <p class="mt-1 text-[13px] leading-relaxed text-ink-2">한 가게에 달린 리뷰 여러 개를 세 줄로 요약해서 보여줍니다.</p>
+          <span class="mt-3 inline-flex h-[22px] items-center rounded-full border border-dashed border-brand-ink bg-brand-wash px-2 text-[11px] font-bold text-brand-ink">Coming Soon</span>
+        </li>
+
+        <li class="rounded-card border border-dashed border-line-strong bg-paper p-5">
+          <svg class="h-6 w-6 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0"/><path d="M9 9.5h.01M15 9.5h.01"/>
+          </svg>
+          <h3 class="mt-3 text-[15px] font-semibold">감성 분석</h3>
+          <p class="mt-1 text-[13px] leading-relaxed text-ink-2">리뷰 문장에서 긍정·부정 신호를 뽑아 별점 외의 지표를 만듭니다.</p>
+          <span class="mt-3 inline-flex h-[22px] items-center rounded-full border border-dashed border-brand-ink bg-brand-wash px-2 text-[11px] font-bold text-brand-ink">Coming Soon</span>
+        </li>
+
+        <li class="rounded-card border border-dashed border-line-strong bg-paper p-5">
+          <svg class="h-6 w-6 text-ink-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>
+          </svg>
+          <h3 class="mt-3 text-[15px] font-semibold">취향 대시보드</h3>
+          <p class="mt-1 text-[13px] leading-relaxed text-ink-2">내가 남긴 리뷰를 모아 자주 가는 분류·지역·평균 별점을 보여줍니다.</p>
+          <span class="mt-3 inline-flex h-[22px] items-center rounded-full border border-dashed border-brand-ink bg-brand-wash px-2 text-[11px] font-bold text-brand-ink">Coming Soon</span>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+</main>
+
+<!-- ══════════════════ ⑤ 푸터 ══════════════════ -->
+<footer class="bg-ink text-paper">
+  <div class="mx-auto max-w-landing px-6 py-10 md:px-10 md:py-14">
+    <p class="font-hand text-[22px] leading-none">FoodReview</p>
+    <p class="mt-1.5 text-[13px] text-[#A79E93]">바이브 코딩 실습 프로젝트</p>
+
+    <ul class="mt-5 flex flex-col md:flex-row md:items-center md:gap-6">
+      <li class="flex h-11 items-center text-sm font-semibold">만든 사람 박승호</li>
+      <li>
+        <a class="footer-link" href="https://github.com/Ental234/FoodReview" target="_blank" rel="noopener noreferrer">
+          GitHub <span class="ml-1 text-xs" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li>
+        <a class="footer-link" href="file:///C:/Users/223/Desktop/Intro/index.html" target="_blank" rel="noopener noreferrer">
+          프로젝트 허브 <span class="ml-1 text-xs" aria-hidden="true">↗</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
+
+<!-- 토스트 (DESIGN §7.11) -->
+<div id="toast" aria-live="polite"
+  class="pointer-events-none fixed inset-x-0 bottom-6 z-[60] flex translate-y-2 justify-center px-6 opacity-0 transition-all duration-200">
+  <p class="rounded-control bg-ink px-4 py-3 text-sm font-semibold text-paper shadow-float">아직 준비 중이에요</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── 최근 리뷰 데이터 (가짜 데이터 · PRD §8) ────────── */
+  var reviews = [
+    { r: 5, text: '국물이 진하고 깔끔해요. 혼밥하기 좋습니다', place: '청담국밥',        user: '주말산책러', when: '3시간 전' },
+    { r: 4, text: '웨이팅은 길지만 앉으면 금방 나와요',        place: '성수 골목분식',    user: '맛집탐험대', when: '5시간 전' },
+    { r: 5, text: '면 삶기가 정확해서 다시 갈 것 같아요',      place: '연남동 파스타바',  user: '골목순례자', when: '어제' },
+    { r: 3, text: '맛은 무난한데 자리가 좁아요',              place: '망원 손만두',      user: '저녁먹자',   when: '어제' },
+    { r: 4, text: '반찬 리필이 눈치 안 보여서 좋았어요',       place: '청담국밥',        user: '노포수집가', when: '2일 전' },
+    { r: 5, text: '사장님이 직접 만두를 빚으십니다',           place: '망원 손만두',      user: '주말산책러', when: '2일 전' },
+    { r: 4, text: '양이 많아서 둘이 나눠 먹기 좋아요',         place: '성수 골목분식',    user: '저녁먹자',   when: '3일 전' },
+    { r: 4, text: '저녁에 가면 조용해서 대화하기 좋아요',      place: '연남동 파스타바',  user: '골목순례자', when: '3일 전' }
+  ];
+
+  /* 별점: 채운 별은 노란 면 + 먹색 윤곽, 빈 별은 윤곽만 (DESIGN §3.4) */
+  function stars(n) {
+    var out = '';
+    for (var i = 1; i <= 5; i++) {
+      var filled = i <= n;
+      out += '<svg class="h-3.5 w-3.5 shrink-0" fill="' + (filled ? '#F7E600' : 'none') +
+             '" stroke="' + (filled ? '#1A1815' : '#948A7D') +
+             '" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><use href="#ico-star"/></svg>';
+    }
+    return '<span class="flex gap-0.5">' + out + '</span>';
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function item(v) {
+    return '<li class="flex shrink-0 items-center gap-2.5 whitespace-nowrap">' +
+             stars(v.r) +
+             '<span class="text-[15px]">\u201C' + escapeHtml(v.text) + '\u201D</span>' +
+             '<span class="text-[13px] text-ink-3">' + escapeHtml(v.place) + ' \u00B7 ' +
+                escapeHtml(v.user) + ' \u00B7 ' + escapeHtml(v.when) +
+                ' <span class="sr-only">별점 ' + v.r + '점</span></span>' +
+             '<span class="ticker-dot mx-5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand ring-[1.5px] ring-ink" aria-hidden="true"></span>' +
+           '</li>';
+  }
+
+  // 목록을 두 번 이어 붙이고 -50%까지 이동시켜 이음매 없이 반복 (DESIGN §13.2)
+  var track = document.getElementById('ticker');
+  var html = reviews.map(item).join('');
+  track.innerHTML = html + html;
+
+  /* ── 토스트 ────────────────────────────────────────── */
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  function showToast() {
+    clearTimeout(toastTimer);
+    toast.classList.remove('opacity-0', 'translate-y-2');
+    toastTimer = setTimeout(function () {
+      toast.classList.add('opacity-0', 'translate-y-2');
+    }, 2500);
+  }
+
+  // 아직 화면이 없는 조작은 죽은 링크 대신 토스트로 알린다
+  document.querySelectorAll('[data-soon]').forEach(function (el) {
+    el.addEventListener('click', showToast);
+  });
+  document.getElementById('heroForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    showToast();
+  });
+
+  /* ── 상단 바: 스크롤하면 종이 배경이 깔린다 ─────────── */
+  var topbar = document.getElementById('topbar');
+  function onScroll() {
+    var on = window.scrollY > 8;
+    topbar.classList.toggle('bg-card', on);
+    topbar.classList.toggle('border-b', on);
+    topbar.classList.toggle('border-line', on);
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ── 섹션 진입 애니메이션 (1회만) ───────────────────── */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('is-in'); });
+  }
+})();
+</script>
+
+</body>
+</html>

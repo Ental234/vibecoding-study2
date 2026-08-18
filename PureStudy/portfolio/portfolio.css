@@ -1,0 +1,456 @@
+:root{
+  --sky:#8fd3f4;
+  --sky-soft:#c9ecfb;
+  --natural-bg:#eef1e3;
+  --natural-bg-deep:#e4e9d3;
+  --natural-border:#dbe3cb;
+  --ink:#33392b;
+  --ink-soft:#6b7360;
+  --card-bg:#ffffff;
+  --card-border:#e1e6d6;
+  --accent:#3ba7e0;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  height:100%;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'Noto Sans KR', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+  color:var(--ink);
+  background:var(--natural-bg);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* ---------- top nav ---------- */
+.page-nav{
+  position:fixed;
+  top:22px;
+  right:24px;
+  display:flex;
+  gap:18px;
+  z-index:100;
+}
+
+.page-nav a{
+  font-size:0.82rem;
+  font-weight:600;
+  letter-spacing:0.03em;
+  color:var(--ink-soft);
+  text-decoration:none;
+  opacity:0.65;
+  transition:opacity 0.2s ease, color 0.2s ease;
+}
+
+.page-nav a:hover{
+  opacity:1;
+  color:var(--accent);
+}
+
+/* ---------- hero ---------- */
+.hero{
+  text-align:center;
+  padding:80px 20px 60px;
+  background:linear-gradient(180deg, var(--natural-bg-deep) 0%, var(--natural-bg) 100%);
+}
+
+.hero-eyebrow{
+  font-size:0.85rem;
+  letter-spacing:0.35em;
+  color:var(--accent);
+  font-weight:600;
+  margin-bottom:14px;
+}
+
+.hero-name{
+  font-size:clamp(2.4rem, 7vw, 3.6rem);
+  font-weight:800;
+  letter-spacing:0.02em;
+  color:var(--ink);
+  margin-bottom:14px;
+}
+
+.hero-desc{
+  font-size:1rem;
+  color:var(--ink-soft);
+}
+
+/* ---------- main ---------- */
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:0 20px;
+}
+
+.section-title{
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--ink);
+  text-align:center;
+  margin-bottom:36px;
+  position:relative;
+}
+
+.section-title::after{
+  content:'';
+  display:block;
+  width:40px;
+  height:3px;
+  background:var(--accent);
+  border-radius:999px;
+  margin:12px auto 0;
+}
+
+/* ---------- hobby cards ---------- */
+.hobby-section{
+  width:100%;
+  max-width:1000px;
+  padding:50px 0 70px;
+  scroll-margin-top:24px;
+}
+
+.hobby-showcase{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:24px;
+  width:100%;
+}
+
+.side-card{
+  flex:0 1 220px;
+  max-width:220px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:16px;
+  padding:22px 20px;
+  box-shadow:0 4px 16px rgba(107,120,84,0.1);
+  transform:translateY(-20px);
+}
+
+.side-card h3{
+  font-size:0.95rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:14px;
+}
+
+.about-card ul{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.about-card li{
+  font-size:0.85rem;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+.skills-card .tag-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.tag{
+  font-size:0.8rem;
+  color:var(--ink);
+  background:var(--natural-bg);
+  border:1px solid var(--natural-border);
+  border-radius:999px;
+  padding:5px 12px;
+}
+
+.hobby-carousel-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  max-width:420px;
+  margin:0 auto;
+  transform:translateY(-20px);
+}
+
+.hobby-nav-btn{
+  flex:0 0 auto;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  border:1px solid var(--card-border);
+  background:var(--card-bg);
+  color:var(--ink);
+  font-size:1.35rem;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(107,120,84,0.15);
+  transition:transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.hobby-nav-btn:hover{
+  background:#f4f8ef;
+  box-shadow:0 6px 16px rgba(107,120,84,0.25);
+}
+
+.hobby-nav-btn:active{
+  transform:scale(0.9);
+}
+
+.hobby-carousel{
+  flex:1 1 auto;
+  min-width:0;
+  max-width:340px;
+  overflow:hidden;
+  border-radius:18px;
+}
+
+.hobby-track{
+  display:flex;
+  cursor:grab;
+  touch-action:pan-y;
+  user-select:none;
+  transition:transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hobby-track.dragging{
+  cursor:grabbing;
+  transition:none;
+}
+
+.hobby-card{
+  flex:0 0 100%;
+  min-width:0;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:18px;
+  padding:44px 28px;
+  text-align:center;
+  box-shadow:0 4px 16px rgba(107,120,84,0.1);
+}
+
+.hobby-icon{
+  font-size:2.6rem;
+  margin-bottom:16px;
+  pointer-events:none;
+}
+
+.hobby-title{
+  font-size:1.15rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:12px;
+  pointer-events:none;
+}
+
+.hobby-desc{
+  font-size:0.9rem;
+  line-height:1.7;
+  color:var(--ink-soft);
+  pointer-events:none;
+}
+
+.hobby-dots{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:22px;
+}
+
+.hobby-dot{
+  display:block;
+  box-sizing:content-box;
+  width:9px;
+  height:9px;
+  padding:0;
+  border:none;
+  border-radius:50%;
+  flex-shrink:0;
+  background:var(--card-border);
+  cursor:pointer;
+  transition:background 0.25s ease, transform 0.25s ease;
+}
+
+.hobby-dot.active{
+  background:var(--accent);
+  transform:scale(1.3);
+}
+
+/* ---------- career timeline ---------- */
+.career-section{
+  width:100%;
+  max-width:560px;
+  padding:20px 0 70px;
+  scroll-margin-top:24px;
+}
+
+.timeline{
+  position:relative;
+  padding-left:30px;
+  display:flex;
+  flex-direction:column;
+  gap:30px;
+}
+
+.timeline::before{
+  content:'';
+  position:absolute;
+  left:5px;
+  top:6px;
+  bottom:6px;
+  width:2px;
+  background:var(--card-border);
+}
+
+.timeline-item{
+  position:relative;
+}
+
+.timeline-dot{
+  position:absolute;
+  left:-25px;
+  top:4px;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 0 3px var(--natural-bg);
+}
+
+.timeline-date{
+  display:block;
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:0.05em;
+  margin-bottom:4px;
+}
+
+.timeline-content h3{
+  font-size:1rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:4px;
+}
+
+.timeline-content p{
+  font-size:0.85rem;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+/* ---------- contact / email button ---------- */
+.contact-section{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:20px 0 70px;
+  scroll-margin-top:24px;
+}
+
+.email-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:var(--ink);
+  font-weight:700;
+  font-size:1.05rem;
+  padding:20px 44px;
+  border-radius:999px;
+  background:radial-gradient(circle at center, #ffffff 0%, #eaf7ff 45%, var(--sky-soft) 75%, var(--sky) 100%);
+  border:1px solid rgba(143,211,244,0.6);
+  box-shadow:0 8px 24px rgba(143,211,244,0.45);
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.email-btn:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 12px 32px rgba(143,211,244,0.6);
+}
+
+.email-btn:active{
+  transform:translateY(0) scale(0.98);
+}
+
+.email-icon{
+  font-size:1.2rem;
+  color:var(--accent);
+}
+
+/* ---------- footer ---------- */
+.page-footer{
+  text-align:center;
+  padding:24px 20px;
+  font-size:0.8rem;
+  color:#8a9478;
+  background:var(--natural-bg-deep);
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:520px){
+  .hero{
+    padding:56px 16px 40px;
+  }
+
+  .hobby-section{
+    padding:40px 0 50px;
+  }
+
+  .page-nav{
+    top:12px;
+    right:14px;
+    gap:10px;
+  }
+
+  .page-nav a{
+    font-size:0.72rem;
+  }
+
+  .email-btn{
+    padding:16px 28px;
+    font-size:0.95rem;
+    width:100%;
+    justify-content:center;
+  }
+
+  .contact-section{
+    padding:10px 16px 50px;
+  }
+
+  .hobby-carousel-wrap{
+    gap:6px;
+  }
+
+  .hobby-nav-btn{
+    width:28px;
+    height:28px;
+    font-size:1.1rem;
+  }
+
+  .side-card{
+    flex:1 1 auto;
+    width:100%;
+    max-width:320px;
+    transform:none;
+  }
+}

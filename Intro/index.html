@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A1815">
+<meta name="color-scheme" content="dark">
+<title>Project Hub</title>
+<style>
+  :root {
+    --bg: #1A1815;
+    --surface: #232019;
+    --text: #F0EDE7;
+    --text-sub: #8A857E;
+    --accent: #D98A66;
+    --accent-hover: #C97B5A;
+    --border: #302B24;
+    /* 중앙 그라데이션 색 — 이 두 줄만 바꾸면 분위기가 통째로 바뀝니다 */
+    --glow-cool: #191A3E;               /* 화면 중앙의 어스름한 남색 */
+    --glow-warm: rgba(217, 138, 102, 0.12); /* 버튼 근처의 따뜻한 기운 */
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 화면 전체를 쓰는 세로 중앙 정렬 */
+  .intro {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  /* 중앙 그라데이션 2겹
+     - 아래층: 화면 중앙으로 갈수록 어스름한 남색 (깊이감)
+     - 위층: 버튼 부근에만 따뜻한 기운 (테라코타 포인트 색을 받쳐줌) */
+  .intro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 75% 60% at 50% 44%, var(--glow-cool) 0%, transparent 72%),
+      radial-gradient(ellipse 38% 26% at 50% 66%, var(--glow-warm), transparent 70%);
+    pointer-events: none;
+  }
+
+  .intro > * { position: relative; }
+
+  .intro__mark {
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--text-sub);
+    margin: 0 0 28px;
+  }
+
+  .intro__title {
+    font-size: clamp(32px, 7vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  /* SplitText가 만든 글자 조각이 잘리지 않도록 */
+  .intro__title .split-line { overflow: hidden; }
+
+  .intro__desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-sub);
+    margin: 20px 0 0;
+    max-width: 30ch;
+  }
+
+  /* 자석 효과가 버튼 자체를 움직이므로 위치 계산용 래퍼를 따로 둔다 */
+  .intro__enter-wrap { margin-top: 56px; }
+
+  .intro__enter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 40px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .intro__enter:hover { background: var(--accent-hover); }
+
+  .intro__enter:focus-visible {
+    outline: 2px solid var(--accent-hover);
+    outline-offset: 3px;
+  }
+
+  .intro__footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    font-size: 12px;
+    color: var(--text-sub);
+    text-align: center;
+  }
+
+  /* 커서를 따라오는 점 하나 (데스크톱 전용) */
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 16px rgba(217, 138, 102, 0.45);
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+    will-change: transform;
+  }
+
+  /* 터치 기기에서는 커서 점을 아예 만들지 않는다 */
+  @media (hover: none), (pointer: coarse) {
+    .cursor-dot { display: none; }
+  }
+
+  /* GSAP이 없거나 로딩에 실패해도 화면이 보이도록 하는 기본 등장 애니메이션 */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .fade-up:nth-child(2) { animation-delay: 0.1s; }
+  .fade-up:nth-child(3) { animation-delay: 0.2s; }
+  .fade-up:nth-child(4) { animation-delay: 0.32s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* GSAP이 준비되면 CSS 애니메이션을 끄고 GSAP에 넘긴다 */
+  .gsap-ready .fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 480px) {
+    .intro__enter { width: 100%; max-width: 260px; }
+    .intro__enter-wrap { width: 100%; display: flex; justify-content: center; }
+  }
+
+  /* 애니메이션을 줄이도록 설정한 사용자 배려 */
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up { animation: none; opacity: 1; transform: none; }
+    .cursor-dot { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+  <main class="intro" id="intro">
+    <p class="intro__mark fade-up">Archive</p>
+    <h1 class="intro__title fade-up" id="title">Project Hub</h1>
+    <p class="intro__desc fade-up">만들어 본 것들을 한곳에 모아둔 개인 아카이브입니다.</p>
+    <div class="intro__enter-wrap fade-up" id="enterWrap">
+      <button type="button" class="intro__enter" id="enterBtn">ENTER</button>
+    </div>
+  </main>
+
+  <p class="intro__footer">© 2026</p>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script>
+(function () {
+  var NEXT_PAGE = 'projects.html';
+  var intro = document.getElementById('intro');
+  var btn = document.getElementById('enterBtn');
+  var wrap = document.getElementById('enterWrap');
+  var title = document.getElementById('title');
+  var dot = document.getElementById('cursorDot');
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var hasGsap = typeof window.gsap !== 'undefined';
+
+  /* ---------- 페이지 이동 ---------- */
+  function enter() {
+    if (!hasGsap || reduceMotion) {
+      location.href = NEXT_PAGE;
+      return;
+    }
+    gsap.to(intro, {
+      opacity: 0,
+      y: -12,
+      duration: 0.45,
+      ease: 'power2.in',
+      onComplete: function () { location.href = NEXT_PAGE; }
+    });
+    gsap.to(dot, { opacity: 0, duration: 0.2 });
+  }
+
+  btn.addEventListener('click', enter);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && document.activeElement !== btn) enter();
+  });
+
+  /* GSAP이 없으면 CSS 애니메이션만으로 동작하고 여기서 끝 */
+  if (!hasGsap || reduceMotion) return;
+
+  document.body.classList.add('gsap-ready');
+
+  /* ---------- 1. 타이틀 글자 단위 등장 (SplitText) ---------- */
+  var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  if (typeof window.SplitText !== 'undefined') {
+    var split = new SplitText(title, { type: 'chars,lines', linesClass: 'split-line' });
+    gsap.set(title, { opacity: 1 });
+    tl.from(split.chars, {
+      yPercent: 110,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.028
+    });
+  } else {
+    /* 플러그인 로딩 실패 시 타이틀 통째로 페이드업 */
+    tl.from(title, { y: 16, opacity: 0, duration: 0.8 });
+  }
+
+  tl.from('.intro__mark', { y: 10, opacity: 0, duration: 0.6 }, 0.1)
+    .from('.intro__desc', { y: 10, opacity: 0, duration: 0.6 }, '-=0.45')
+    .from(wrap, { y: 10, opacity: 0, duration: 0.6 }, '-=0.4');
+
+  /* 커서/자석 효과는 마우스가 있는 기기에서만 */
+  if (!finePointer) return;
+
+  /* ---------- 2. 커서 잔상 (점 하나) ---------- */
+  gsap.set(dot, { xPercent: -50, yPercent: -50 });
+
+  var dotX = gsap.quickTo(dot, 'x', { duration: 0.5, ease: 'power3' });
+  var dotY = gsap.quickTo(dot, 'y', { duration: 0.5, ease: 'power3' });
+  var dotShown = false;
+
+  /* ---------- 3. 자석 버튼 ---------- */
+  var PULL = 0.3;      // 커서 쪽으로 끌려가는 비율
+  var MAX_SHIFT = 10;  // 최대 이동 거리(px) — 미니멀 톤 유지를 위해 제한
+  var FIELD = 110;     // 버튼 바깥 어디까지 반응할지(px)
+
+  var btnX = gsap.quickTo(btn, 'x', { duration: 0.6, ease: 'power3' });
+  var btnY = gsap.quickTo(btn, 'y', { duration: 0.6, ease: 'power3' });
+  var magnetized = false;
+  var clamp = gsap.utils.clamp(-MAX_SHIFT, MAX_SHIFT);
+
+  window.addEventListener('mousemove', function (e) {
+    /* 커서 점 따라가기 */
+    if (!dotShown) {
+      dotShown = true;
+      gsap.set(dot, { x: e.clientX, y: e.clientY });
+      gsap.to(dot, { opacity: 0.85, duration: 0.4 });
+    }
+    dotX(e.clientX);
+    dotY(e.clientY);
+
+    /* 버튼 자석 효과 */
+    var r = btn.getBoundingClientRect();
+    var cx = r.left + r.width / 2;
+    var cy = r.top + r.height / 2;
+    var dx = e.clientX - cx;
+    var dy = e.clientY - cy;
+    var inField =
+      Math.abs(dx) < r.width / 2 + FIELD &&
+      Math.abs(dy) < r.height / 2 + FIELD;
+
+    if (inField) {
+      magnetized = true;
+      btnX(clamp(dx * PULL));
+      btnY(clamp(dy * PULL));
+      if (!dot._near) {
+        dot._near = true;
+        gsap.to(dot, { scale: 2.4, opacity: 0.35, duration: 0.3 });
+      }
+    } else if (magnetized) {
+      magnetized = false;
+      /* 제자리로 돌아올 때만 살짝 탄성 */
+      gsap.to(btn, { x: 0, y: 0, duration: 0.9, ease: 'elastic.out(1, 0.4)' });
+      if (dot._near) {
+        dot._near = false;
+        gsap.to(dot, { scale: 1, opacity: 0.85, duration: 0.3 });
+      }
+    }
+  });
+
+  /* 창 밖으로 커서가 나가면 점을 숨기고 버튼을 원위치 */
+  document.addEventListener('mouseleave', function () {
+    gsap.to(dot, { opacity: 0, duration: 0.3 });
+    gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'power3.out' });
+    magnetized = false;
+    dotShown = false;
+  });
+})();
+</script>
+</body>
+</html>

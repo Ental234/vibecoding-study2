@@ -1,0 +1,403 @@
+<body class="bg-surface font-body-main text-on-surface">
+
+<header class="fixed top-0 w-full z-50 bg-paper-card border-b border-border-sep">
+<div class="h-s8 max-w-max-width mx-auto flex items-center justify-between px-s3">
+<div class="flex items-center gap-s1"><span class="material-symbols-outlined text-secondary">timer</span><span class="font-headline-title text-headline-title text-ink-primary tracking-tight">순공</span></div>
+<nav class="flex items-center gap-s5" role="tablist" aria-label="화면 전환">
+<button class="tab font-button-text text-button-text text-on-surface-variant hover:text-on-surface transition-colors aria-selected:text-terracotta aria-selected:font-bold" role="tab" data-tab="timer" aria-selected="true" aria-controls="view-timer">타이머</button>
+<button class="tab font-button-text text-button-text text-on-surface-variant hover:text-on-surface transition-colors aria-selected:text-terracotta aria-selected:font-bold" role="tab" data-tab="week" aria-selected="false" aria-controls="view-week">주간</button>
+<button class="tab font-button-text text-button-text text-on-surface-variant hover:text-on-surface transition-colors aria-selected:text-terracotta aria-selected:font-bold" role="tab" data-tab="settings" aria-selected="false" aria-controls="view-settings">설정</button>
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-s2"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
+</nav>
+</div>
+</header>
+
+<main class="relative pt-s8 max-w-max-width mx-auto min-h-screen bg-surface">
+
+<!-- =====================================================
+     타이머
+     ===================================================== -->
+<section class="view flex flex-col w-full h-full relative font-body-main" id="view-timer" role="tabpanel">
+<div class="px-s3 pt-s8 pb-s6 flex flex-col items-center justify-center relative">
+<div class="mb-s4 opacity-70">
+<span class="font-label-caption text-label-caption text-ink-muted " id="today-label">오늘 순공시간</span>
+</div>
+<div class="relative w-full max-w-[400px] aspect-square rounded-full border border-border-sep bg-paper-card flex items-center justify-center">
+<div class="absolute inset-[16px] rounded-full border border-border-sep border-dashed opacity-50 pointer-events-none"></div>
+<div class="text-center z-10 flex flex-col items-center">
+<h1 class="font-timer-display text-timer-display text-ink-primary font-medium tracking-tighter tnum" id="today-value">
+          0:00:00
+        </h1>
+<p class="font-label-caption text-label-caption text-ink-muted mt-s2" id="session-line" hidden></p>
+</div>
+</div>
+<div class="mt-s5 grid grid-cols-2 gap-s4 w-full max-w-[400px]">
+<div class="flex flex-col items-center text-center p-s3 border border-border-sep bg-paper-card rounded-lg">
+<span class="font-label-caption text-label-caption text-ink-muted mb-s1">어제</span>
+<span class="font-headline-title text-headline-title text-ink-primary tnum" id="cmp-y-base">—</span>
+<span id="cmp-y-delta" hidden></span>
+</div>
+<div class="flex flex-col items-center text-center p-s3 border border-border-sep bg-paper-card rounded-lg">
+<span class="font-label-caption text-label-caption text-ink-muted mb-s1">7일 평균</span>
+<span class="font-headline-title text-headline-title text-ink-primary tnum" id="cmp-a-base">—</span>
+<span id="cmp-a-delta" hidden></span>
+</div>
+</div>
+</div>
+
+<div class="w-full px-s3 pb-s6" id="goal-area">
+<div class="max-w-[600px] mx-auto border border-border-sep bg-paper-card rounded-lg p-s4 relative">
+<div class="flex justify-between items-end mb-s2">
+<span class="font-label-caption text-label-caption text-ink-primary font-medium">일일 목표 달성률</span>
+<span class="font-label-caption text-label-caption text-ink-muted tnum" id="goal-line"></span>
+</div>
+<div class="relative h-[24px] w-full flex items-center mt-s4 mb-s2" id="progress">
+<div class="absolute inset-0 top-1/2 -translate-y-1/2 h-[1px] w-full bg-border-sep pointer-events-none"></div>
+<div class="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] w-0 bg-ink-primary pointer-events-none transition-all duration-1000 ease-in-out" id="bar-fill"></div>
+<div class="absolute right-0 top-0 bottom-0 w-[1px] h-full bg-ink-muted pointer-events-none"></div>
+<span class="absolute left-1/2 -translate-x-1/2 bottom-[calc(50%+34px)] font-label-caption text-label-caption font-bold text-secondary tnum" id="over-label" hidden>0%</span>
+<div class="absolute left-0 bottom-1/2 w-[calc(100%-34px)]" id="runner-layer">
+<div class="runner w-[34px] text-terracotta transition-colors duration-500" id="runner"></div>
+</div>
+</div>
+<div class="flex justify-between mt-s1">
+<span class="font-label-caption text-label-caption text-ink-whisper text-[10px]">Start</span>
+<span class="font-label-caption text-label-caption text-ink-whisper text-[10px]">Goal</span>
+</div>
+</div>
+</div>
+
+<p class="font-label-caption text-label-caption text-ink-whisper text-center px-s3 pb-s6" id="goal-empty" hidden>설정에서 하루 목표를 정하면 진행 바가 나타납니다</p>
+
+<!-- 백업 안내 (§6.11) — 기록은 이 브라우저에만 있다 -->
+<div class="max-w-[600px] mx-auto px-s3 pb-s6 flex items-center justify-center gap-s2" id="backup-banner" hidden>
+<div class="w-full flex items-center justify-center gap-s2 border border-border-sep bg-surface-container-low rounded-DEFAULT py-s1 px-s2">
+<span class="font-label-caption text-label-caption text-ink-muted" id="backup-banner-text"></span>
+<button class="font-label-caption text-label-caption text-ink-primary border border-border-sep bg-paper-card rounded-DEFAULT px-s2 py-1 hover:bg-surface-container transition-colors whitespace-nowrap" type="button" id="backup-banner-export">지금 내보내기</button>
+</div>
+</div>
+
+<p class="font-label-caption text-label-caption text-secondary text-center px-s3 pb-s2" id="tab-notice" hidden>다른 탭에서 실행 중입니다. 그 탭에서 이어서 사용하세요.</p>
+<p class="font-label-caption text-label-caption text-ink-muted text-center px-s3 pb-s2" id="flash" hidden></p>
+
+<div class="mt-auto w-full border-t border-border-sep bg-paper-card py-s4 px-s3 sticky bottom-0">
+<div class="max-w-max-width mx-auto flex gap-s3 items-center">
+<div class="flex-1 relative flex items-center">
+<span class="absolute left-s3 w-[10px] h-[10px] rounded-full bg-ink-whisper pointer-events-none z-10 transition-colors" id="subject-dot" aria-hidden="true"></span>
+<select class="w-full appearance-none bg-transparent border border-border-sep h-[48px] pl-[44px] pr-[40px] rounded-lg font-body-main text-body-main text-ink-primary focus:outline-none focus:border-terracotta transition-colors cursor-pointer" id="subject-select" aria-label="과목 선택">
+<option value="">미분류</option>
+</select>
+<span class="material-symbols-outlined absolute right-s2 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none">expand_more</span>
+</div>
+<button class="h-[48px] px-s5 bg-ink-primary text-on-primary font-button-text text-button-text rounded-lg flex items-center justify-center gap-s1 transition-colors hover:bg-inverse-surface disabled:opacity-40 min-w-[120px]" id="btn-start">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span><span>시작</span>
+</button>
+<button class="h-[48px] px-s4 bg-paper-card border border-border-sep text-ink-primary font-button-text text-button-text rounded-lg flex items-center justify-center gap-s1 transition-colors hover:bg-surface-container min-w-[120px]" id="btn-pause" hidden>
+<span class="material-symbols-outlined text-[20px]">pause</span><span>일시정지</span>
+</button>
+<button class="h-[48px] px-s5 bg-ink-primary text-on-primary font-button-text text-button-text rounded-lg flex items-center justify-center gap-s1 transition-colors hover:bg-inverse-surface min-w-[120px]" id="btn-resume" hidden>
+<span class="material-symbols-outlined text-[20px]">play_arrow</span><span>재개</span>
+</button>
+<button class="h-[48px] px-s4 bg-stop-fill border border-stop-ink text-stop-ink font-button-text text-button-text rounded-lg flex items-center justify-center gap-s1 transition-colors hover:opacity-80 min-w-[120px]" id="btn-stop" hidden>
+<span class="material-symbols-outlined text-[20px]">stop</span><span>종료</span>
+</button>
+</div>
+</div>
+</section>
+
+<!-- =====================================================
+     주간 리포트
+     ===================================================== -->
+<section class="view" id="view-week" role="tabpanel" hidden>
+<div class="flex flex-col w-full h-full p-s3 gap-s5 relative" id="week-panel">
+<!-- Header Section -->
+<section class="flex flex-col gap-s1">
+<h1 class="font-headline-title text-headline-title text-ink-primary">주간 리포트</h1>
+<p class="font-body-main text-body-main text-ink-muted">이번 주 순수 공부 시간 요약입니다.</p>
+</section>
+<div class="flex items-center gap-s2">
+<button class="w-8 h-8 flex items-center justify-center border border-border-sep bg-paper-card rounded-DEFAULT text-ink-muted hover:text-ink-primary hover:bg-surface-container transition-colors disabled:opacity-30" id="week-prev" aria-label="이전 주"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<span class="flex-1 font-button-text text-button-text text-ink-primary" id="week-range"></span>
+<button class="w-8 h-8 flex items-center justify-center border border-border-sep bg-paper-card rounded-DEFAULT text-ink-muted hover:text-ink-primary hover:bg-surface-container transition-colors disabled:opacity-30" id="week-next" aria-label="다음 주"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+<!-- Total Time Summary -->
+<section class="relative bg-paper-card border border-border-sep rounded-xl p-s4 flex flex-col items-center justify-center gap-s2 transition-transform hover:-translate-y-1 duration-300">
+<div class="grad-sheen absolute inset-0 bg-gradient-to-br from-paper-bg/50 via-transparent to-surface/50 rounded-xl pointer-events-none"></div>
+<p class="font-label-caption text-label-caption text-ink-muted uppercase tracking-widest relative z-10" id="week-total-label">이번 주</p>
+<div class="flex items-baseline gap-s1 relative z-10">
+<span class="font-timer-display text-timer-display text-ink-primary tnum" id="week-total">0시간</span>
+</div>
+<div class="flex items-center gap-s1 bg-surface-container-low px-s2 py-s1 rounded-full border border-border-sep relative z-10">
+<span class="material-symbols-outlined text-[16px] text-terracotta">trending_up</span>
+<span class="font-label-caption text-label-caption text-ink-muted">지난주</span>
+<span class="font-label-caption text-label-caption text-ink-primary tnum" id="week-prev-base">—</span>
+<span id="week-delta" hidden></span>
+</div>
+</section>
+<!-- Weekly Chart Section -->
+<section class="flex flex-col bg-paper-card border border-border-sep rounded-xl p-s4 flex-1 relative overflow-hidden">
+<div class="flex justify-between items-end mb-s4 z-10">
+<h2 class="font-button-text text-button-text text-ink-primary">요일별 기록</h2>
+<div class="flex items-center gap-s2">
+<div class="flex items-center gap-s1">
+<div class="w-3 h-3 rounded-full bg-secondary-container border border-secondary"></div>
+<span class="font-label-caption text-label-caption text-ink-muted">목표 달성</span>
+</div>
+<div class="flex items-center gap-s1">
+<div class="w-3 h-3 rounded-full bg-surface-variant border border-border-sep"></div>
+<span class="font-label-caption text-label-caption text-ink-muted">미달성</span>
+</div>
+</div>
+</div>
+<!-- Chart Area — 막대는 기록에서 그린다.
+     시안의 h-full 연쇄는 확정 높이가 없어 막대가 0으로 접힌다. 여기서 높이를 못 박는다 -->
+<div class="relative flex items-end justify-between gap-s2 px-s2 h-[260px] z-10" id="week-bars"></div>
+<!-- Background decorative pattern -->
+<div class="absolute inset-0 z-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#8A8073 1px, transparent 1px); background-size: 16px 16px;"></div>
+<p class="font-label-caption text-label-caption text-ink-muted text-center mt-s4 z-10 relative" id="week-goal-line"></p>
+</section>
+</div>
+
+<!-- 하루 상세 -->
+<div class="flex flex-col w-full h-full p-s3 gap-s3 relative" id="day-panel" hidden>
+<div class="flex items-center gap-s2">
+<button class="w-8 h-8 flex items-center justify-center border border-border-sep bg-paper-card rounded-DEFAULT text-ink-muted hover:text-ink-primary hover:bg-surface-container transition-colors" id="day-back" aria-label="주간으로 돌아가기"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<span class="flex-1 font-headline-title text-headline-title text-ink-primary" id="day-title"></span>
+<span class="font-button-text text-button-text text-ink-primary tnum" id="day-total"></span>
+</div>
+
+<section class="bg-paper-card border border-border-sep rounded-xl p-s4 flex flex-col gap-s2">
+<h2 class="font-button-text text-button-text text-ink-primary">타임라인</h2>
+<div class="relative h-[28px] w-full bg-surface border border-border-sep rounded-DEFAULT overflow-hidden" id="day-timeline"></div>
+<div class="flex justify-between font-label-caption text-label-caption text-ink-muted text-[11px] tnum" id="day-ticks"></div>
+
+<h2 class="font-button-text text-button-text text-ink-primary mt-s4">구간</h2>
+<div class="flex flex-col border border-border-sep rounded-DEFAULT" id="day-segments"></div>
+
+<h2 class="font-button-text text-button-text text-ink-primary mt-s4">과목별</h2>
+<div class="flex flex-col gap-s1" id="day-dist"></div>
+</section>
+</div>
+</section>
+
+<!-- =====================================================
+     설정
+     ===================================================== -->
+<section class="view" id="view-settings" role="tabpanel" hidden>
+<div class="max-w-max-width mx-auto w-full flex flex-col gap-s6 px-s3 mb-s8">
+<!-- Header Section -->
+<div class="flex flex-col gap-s1 mt-s4">
+<h1 class="font-headline-title text-headline-title text-on-surface">앱 설정</h1>
+<p class="font-body-main text-body-main text-ink-muted">타이머 및 학습 환경을 맞춤 설정하세요.</p>
+</div>
+<!-- Subject Management Section -->
+<section class="flex flex-col gap-s3">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-title text-headline-title text-on-surface">과목 관리</h2>
+<button class="font-button-text text-button-text text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-s1" id="add-subject-focus">
+<span class="material-symbols-outlined text-[18px]">add</span>과목 추가
+        </button>
+</div>
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT flex flex-col">
+<div id="subject-list"></div>
+<div class="flex items-center justify-between p-s3 border-t border-border-sep gap-s2">
+<input class="w-full max-w-sm bg-transparent font-body-main text-body-main text-on-surface border-b border-border-sep focus:border-terracotta focus:outline-none py-1 transition-colors placeholder:text-ink-whisper" type="text" id="new-subject" placeholder="새 과목 이름" maxlength="20">
+<button class="border border-border-sep bg-transparent text-ink-primary font-button-text text-button-text py-2 px-s3 rounded-DEFAULT hover:bg-surface-container transition-colors whitespace-nowrap" id="add-subject">추가</button>
+</div>
+<div class="border-t border-border-sep" id="archived-wrap" hidden>
+<p class="font-label-caption text-label-caption text-ink-muted px-s3 pt-s3">보관된 과목</p>
+<div id="archived-list"></div>
+</div>
+</div>
+</section>
+<!-- Timer Settings Section -->
+<section class="flex flex-col gap-s3">
+<h2 class="font-headline-title text-headline-title text-on-surface">타이머 설정</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-s3">
+<!-- Daily Goal Card -->
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT p-s3 flex flex-col gap-s4">
+<div class="flex flex-col gap-1">
+<label class="font-button-text text-button-text text-on-surface" for="goal-h">하루 목표 시간</label>
+<p class="font-label-caption text-label-caption text-ink-muted" id="goal-note"></p>
+</div>
+<div class="flex items-center gap-s2">
+<div class="relative w-32">
+<input class="w-full bg-surface-container-lowest border border-border-sep rounded-DEFAULT p-2 text-center font-body-main text-body-main text-on-surface focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta transition-all tnum" id="goal-h" max="23" min="0" step="1" type="number">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-caption text-label-caption text-ink-muted pointer-events-none">시간</span>
+</div>
+<div class="relative w-32">
+<input class="w-full bg-surface-container-lowest border border-border-sep rounded-DEFAULT p-2 text-center font-body-main text-body-main text-on-surface focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta transition-all tnum" id="goal-m" max="55" min="0" step="5" type="number">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 font-label-caption text-label-caption text-ink-muted pointer-events-none">분</span>
+</div>
+</div>
+</div>
+<!-- Day Boundary Card -->
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT p-s3 flex flex-col gap-s4">
+<div class="flex flex-col gap-1">
+<label class="font-button-text text-button-text text-on-surface" for="boundary-hour">하루 경계 시간</label>
+<p class="font-label-caption text-label-caption text-ink-muted">하루가 이 시각에 시작해 다음 날 같은 시각에 끝납니다. 밤 11시~새벽 1시 공부는 전날 기록으로 산입되며, 이미 저장된 기록의 소속 날짜는 바뀌지 않습니다.</p>
+</div>
+<div class="relative w-full max-w-[200px] mt-auto">
+<select class="w-full appearance-none bg-surface-container-lowest border border-border-sep rounded-DEFAULT p-2 pr-8 font-body-main text-body-main text-on-surface focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta transition-all cursor-pointer" id="boundary-hour"></select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Pause Timeout -->
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT p-s3 flex items-center justify-between gap-s4">
+<div class="flex flex-col gap-1 w-2/3">
+<label class="font-button-text text-button-text text-on-surface" for="pause-timeout">일시정지 자동 종료</label>
+<p class="font-label-caption text-label-caption text-ink-muted">일시정지가 이보다 길어지면 세션을 종료합니다. 종료 시각은 일시정지를 누른 시점으로 소급됩니다.</p>
+</div>
+<div class="relative w-full max-w-[160px]">
+<select class="w-full appearance-none bg-surface-container-lowest border border-border-sep rounded-DEFAULT p-2 pr-8 font-body-main text-body-main text-on-surface focus:border-terracotta focus:outline-none focus:ring-1 focus:ring-terracotta transition-all cursor-pointer" id="pause-timeout"></select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Theme -->
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT p-s3 flex items-center justify-between gap-s4">
+<div class="flex flex-col gap-1 w-2/3">
+<span class="font-button-text text-button-text text-on-surface">화면</span>
+<p class="font-label-caption text-label-caption text-ink-muted">시스템은 기기의 설정을 따릅니다.</p>
+</div>
+<div class="inline-flex border border-border-sep rounded-DEFAULT overflow-hidden shrink-0" id="theme-toggle">
+<button class="font-label-caption text-label-caption px-s3 py-2 transition-colors" data-theme-value="system">시스템</button>
+<button class="font-label-caption text-label-caption px-s3 py-2 border-l border-border-sep transition-colors" data-theme-value="light">라이트</button>
+<button class="font-label-caption text-label-caption px-s3 py-2 border-l border-border-sep transition-colors" data-theme-value="dark">다크</button>
+</div>
+</div>
+</section>
+<!-- Backup & Data Section -->
+<section class="flex flex-col gap-s3 mt-s4">
+<h2 class="font-headline-title text-headline-title text-on-surface">데이터 관리</h2>
+<div class="bg-paper-card border border-border-sep rounded-DEFAULT p-s3 flex flex-col md:flex-row items-start md:items-center justify-between gap-s4">
+<div class="flex flex-col gap-1">
+<h3 class="font-button-text text-button-text text-on-surface">백업 및 복원</h3>
+<p class="font-label-caption text-label-caption text-ink-muted" id="backup-note"></p>
+</div>
+<div class="flex items-center gap-s2 w-full md:w-auto shrink-0">
+<button class="flex-1 md:flex-none border border-border-sep bg-transparent text-ink-primary font-button-text text-button-text py-2 px-s3 rounded-DEFAULT hover:bg-surface-container transition-colors text-center whitespace-nowrap" id="export-btn">
+            데이터 내보내기
+          </button>
+<button class="flex-1 md:flex-none border border-border-sep bg-transparent text-ink-primary font-button-text text-button-text py-2 px-s3 rounded-DEFAULT hover:bg-surface-container transition-colors text-center whitespace-nowrap" id="import-btn">
+            데이터 가져오기
+          </button>
+<input type="file" id="import-file" accept="application/json,.json" hidden>
+</div>
+</div>
+<p class="font-label-caption text-label-caption text-ink-muted">
+  브라우저 저장은 캐시 삭제 한 번으로 사라집니다. 기록이 쌓일수록 소실의 타격이 커지므로, 백업은 선택 기능이 아닙니다.
+</p>
+</section>
+</div>
+</section>
+
+</main>
+
+<footer class="w-full border-t border-border-sep bg-surface-container-low py-s4 mt-s8"><div class="max-w-max-width mx-auto px-s3 flex flex-col items-center gap-s1"><p class="font-label-caption text-label-caption text-ink-muted uppercase tracking-widest">PureStudy Digital Stationery</p><p class="font-label-caption text-label-caption text-ink-whisper italic">모든 데이터는 기기에 로컬로 자동 저장됩니다.</p></div></footer>
+
+<!-- 캐릭터 원본. 타이머와 결과 화면이 같은 것을 복제해 쓴다 -->
+<template id="runner-tpl">
+  <svg class="runner-svg" viewBox="0 0 32 26" fill="currentColor" aria-hidden="true">
+    <!-- 다리 2프레임: a는 선 자세, b는 뻗은 자세 -->
+    <g class="legs legs-a" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <line x1="12" y1="16" x2="11" y2="22"/>
+      <line x1="19" y1="16" x2="20" y2="22"/>
+    </g>
+    <g class="legs legs-b" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <line x1="12" y1="16" x2="7"  y2="21"/>
+      <line x1="19" y1="16" x2="24" y2="21"/>
+    </g>
+    <path d="M8 12 C 3 11, 2 7, 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="15" cy="12" rx="8" ry="4.6"/>
+    <circle cx="24" cy="8.5" r="3.8"/>
+    <path d="M22.2 5.6 L23.4 1.6 L25.6 4.6 Z"/>
+    <path d="M27 8.2 L31 9 L27 10.2 Z"/>
+    <circle cx="24.8" cy="7.9" r="0.85" fill="#FFFDF8"/>
+  </svg>
+</template>
+
+<!-- 끊긴 세션 복구 (PRD §6.4)
+     근거 없이 "언제까지 하셨나요?"라고 물으면 숫자가 부풀고, 어제 대비 비교가 무의미해진다.
+     하트비트가 그 근거다. -->
+<dialog class="w-[420px] max-w-[calc(100vw-96px)] p-s5 bg-paper-card border border-border-sep rounded-xl text-on-surface backdrop:bg-[rgba(26,23,19,.45)]" id="recovery-modal">
+  <h2 class="font-headline-title text-headline-title text-ink-primary mb-s2">기록이 끊겼어요</h2>
+  <p class="font-body-main text-body-main text-on-surface" id="rec-msg"></p>
+  <p class="font-label-caption text-label-caption text-ink-muted mt-s2" id="rec-span"></p>
+
+  <div class="flex flex-col gap-s1 mt-s4" id="rec-choices">
+    <button class="bg-ink-primary text-on-primary font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-inverse-surface transition-colors" id="rec-save">여기까지 저장</button>
+    <button class="border border-border-sep bg-transparent text-ink-primary font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-surface-container transition-colors" id="rec-manual">시간 직접 입력</button>
+    <button class="text-ink-muted font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-surface-container transition-colors" id="rec-discard">버리기</button>
+  </div>
+
+  <div class="mt-s3" id="rec-manual-area" hidden>
+    <label class="block font-label-caption text-label-caption text-ink-muted mb-s1" for="rec-time">공부를 끝낸 시각</label>
+    <input class="w-full bg-surface-container-lowest border border-border-sep rounded-DEFAULT p-2 font-body-main text-body-main text-on-surface focus:border-terracotta focus:outline-none transition-colors tnum" type="datetime-local" id="rec-time">
+    <p class="font-label-caption text-label-caption text-error mt-s1" id="rec-error" hidden></p>
+    <div class="flex flex-col gap-s1 mt-s4">
+      <button class="bg-ink-primary text-on-primary font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-inverse-surface transition-colors" id="rec-manual-ok">이 시각으로 저장</button>
+      <button class="text-ink-muted font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-surface-container transition-colors" id="rec-manual-back">돌아가기</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- 가져오기 확인 (PRD §6.11) — 되돌릴 수 없는 덮어쓰기다 -->
+<dialog class="w-[420px] max-w-[calc(100vw-96px)] p-s5 bg-paper-card border border-border-sep rounded-xl text-on-surface backdrop:bg-[rgba(26,23,19,.45)]" id="import-modal">
+  <h2 class="font-headline-title text-headline-title text-ink-primary mb-s2">가져오기</h2>
+  <p class="font-body-main text-body-main text-on-surface">지금 기록을 모두 지우고 이 파일의 내용으로 대체합니다. 되돌릴 수 없습니다.</p>
+
+  <div class="grid grid-cols-2 gap-s3 mt-s3">
+    <div class="border border-border-sep rounded-DEFAULT p-s2 bg-surface">
+      <p class="font-label-caption text-label-caption text-ink-muted">가져올 파일</p>
+      <p class="font-body-main text-body-main text-on-surface" id="imp-new"></p>
+      <p class="font-label-caption text-label-caption text-ink-muted" id="imp-new-range"></p>
+    </div>
+    <div class="border border-border-sep rounded-DEFAULT p-s2 bg-surface">
+      <p class="font-label-caption text-label-caption text-ink-muted">지금 기록</p>
+      <p class="font-body-main text-body-main text-on-surface" id="imp-cur"></p>
+      <p class="font-label-caption text-label-caption text-ink-muted" id="imp-cur-range"></p>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-s1 mt-s4">
+    <button class="bg-ink-primary text-on-primary font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-inverse-surface transition-colors" id="imp-ok">덮어쓰고 가져오기</button>
+    <button class="text-ink-muted font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-surface-container transition-colors" id="imp-cancel">취소</button>
+  </div>
+</dialog>
+
+<!-- 종료 결과 (PRD §6.5)
+     방금 공부를 끝냈고 아직 자리에 앉아 있는, 감정이 가장 크게 움직이는 시점이다. -->
+<dialog class="w-[380px] max-w-[calc(100vw-96px)] p-s5 bg-paper-card border border-border-sep rounded-xl text-on-surface text-center backdrop:bg-[rgba(26,23,19,.45)]" id="result-modal">
+  <div class="relative h-[24px] w-full flex items-center mt-s8 mb-s5" id="finish-run">
+    <div class="absolute inset-0 top-1/2 -translate-y-1/2 h-[1px] w-full bg-border-sep pointer-events-none"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-[1px] h-full bg-ink-muted pointer-events-none"></div>
+    <div class="absolute left-0 bottom-1/2 w-[calc(100%-34px)]" id="result-runner-layer">
+      <div class="runner w-[34px] text-secondary" id="result-runner"></div>
+    </div>
+  </div>
+
+  <p class="font-label-caption text-label-caption text-ink-muted">이번 세션</p>
+  <p class="text-[40px] font-semibold tracking-tight text-ink-primary tnum" id="res-session"></p>
+  <p class="font-label-caption text-label-caption text-ink-muted mt-s1" id="res-focus"></p>
+  <p class="font-label-caption text-label-caption text-ink-whisper mt-s1" id="res-span"></p>
+
+  <div class="mt-s4 pt-s3 border-t border-border-sep flex flex-col gap-s1 text-left">
+    <div class="flex justify-between items-baseline gap-s2">
+      <span class="font-label-caption text-label-caption text-ink-muted">오늘 누적</span>
+      <span class="flex items-baseline gap-s1 font-body-main text-body-main text-on-surface tnum"><span id="res-today"></span></span>
+    </div>
+    <div class="flex justify-between items-baseline gap-s2">
+      <span class="font-label-caption text-label-caption text-ink-muted">어제</span>
+      <span class="flex items-baseline gap-s1 font-body-main text-body-main text-on-surface tnum">
+        <span id="res-yesterday"></span>
+        <span id="res-delta" hidden></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-s1 mt-s4">
+    <button class="bg-ink-primary text-on-primary font-button-text text-button-text py-3 rounded-DEFAULT hover:bg-inverse-surface transition-colors" id="res-close">닫기</button>
+  </div>
+</dialog>
+

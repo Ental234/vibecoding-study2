@@ -1,0 +1,2501 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<title>순공</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* =========================================================
+   순공 — 디자인 토큰
+   PRD §7 디자인 가이드. 그림자를 쓰지 않는다.
+   종이의 질감은 얇은 선과 미색 대비에서 나온다.
+   ========================================================= */
+
+:root {
+  /* 표면 · 텍스트 (라이트) */
+  --bg:            #FAF6EF;
+  --card:          #FFFDF8;
+  --border:        #E5DCCC;
+  --text:          #3A342C;
+  --muted:         #8A8073;
+  --whisper:       #D1CDC7;  /* 비활성 · 플레이스홀더 (DESIGN.md Dust Taupe) */
+  --accent:        #C4703A;  /* 진행 바 */
+  --done:          #7A8B4F;  /* 달성 */
+
+  /* 종료 버튼 — 연한 빨강. 채도를 낮춰 종이 톤 안에 머무르게 한다 */
+  --stop-fill:     #F7E7E1;
+  --stop-fill-h:   #F0D6CD;  /* hover — 한 단계 진하게 */
+  --stop-line:     #DFB7AB;
+  --stop-line-h:   #CE9384;
+  --stop-ink:      #93432F;
+
+  /* 과목 8색 (라이트) — 순서대로 자동 배정 */
+  --subj-1: #C17A5C;  /* 테라코타 */
+  --subj-2: #A0A06A;  /* 올리브   */
+  --subj-3: #BC9A4A;  /* 머스터드 */
+  --subj-4: #93A184;  /* 세이지   */
+  --subj-5: #B08468;  /* 클레이   */
+  --subj-6: #5F6E8C;  /* 인디고   */
+  --subj-7: #BD8188;  /* 로즈     */
+  --subj-8: #6F5643;  /* 코코아   */
+
+  /* 타이포 스케일 */
+  --fs-timer: 64px;
+  --fs-title: 20px;
+  --fs-body:  15px;
+  --fs-sub:   13px;
+
+  /* 간격 — 8의 배수 */
+  --s1:  8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 40px;
+  --s6: 48px;
+  --s8: 64px;
+
+  /* 모서리 */
+  --r-card: 12px;
+  --r-btn:   8px;
+}
+
+/* 다크 팔레트 — 시스템 설정 (사용자가 라이트를 명시하지 않은 경우) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #1E1B17;
+    --card:    #262119;
+    --border:  #3A332A;
+    --text:    #EDE6DA;
+    --muted:   #9A9082;
+    --whisper: #6A6156;
+    --accent:  #D28250;
+    --done:    #94A566;
+
+    --stop-fill:   #3B2823;
+    --stop-fill-h: #4A302A;
+    --stop-line:   #5C3D34;
+    --stop-line-h: #744D42;
+    --stop-ink:    #E0A192;
+
+    --subj-1: #CE9983;
+    --subj-2: #B1B18B;
+    --subj-3: #C7AD70;
+    --subj-4: #AEB7A4;
+    --subj-5: #C0A08C;
+    --subj-6: #818DA7;
+    --subj-7: #CCA3A8;
+    --subj-8: #93745C;
+  }
+}
+
+/* 다크 팔레트 — 설정에서 명시적으로 선택한 경우 */
+:root[data-theme="dark"] {
+  --bg:      #1E1B17;
+  --card:    #262119;
+  --border:  #3A332A;
+  --text:    #EDE6DA;
+  --muted:   #9A9082;
+  --whisper: #6A6156;
+  --accent:  #D28250;
+  --done:    #94A566;
+
+  --stop-fill:   #3B2823;
+  --stop-fill-h: #4A302A;
+  --stop-line:   #5C3D34;
+  --stop-line-h: #744D42;
+  --stop-ink:    #E0A192;
+
+  --subj-1: #CE9983;
+  --subj-2: #B1B18B;
+  --subj-3: #C7AD70;
+  --subj-4: #AEB7A4;
+  --subj-5: #C0A08C;
+  --subj-6: #818DA7;
+  --subj-7: #CCA3A8;
+  --subj-8: #93745C;
+}
+
+/* =========================================================
+   기본
+   ========================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+               "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 그림자는 쓰지 않는다 — 어떤 요소에도 box-shadow 없음 */
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: var(--r-btn);
+  padding: var(--s1) var(--s2);
+  transition: background .15s, border-color .15s, color .15s;
+}
+button:hover:not(:disabled) { border-color: var(--muted); }
+button:disabled { color: var(--whisper); cursor: not-allowed; border-color: var(--border); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* =========================================================
+   레이아웃 — 데스크톱 전용 (PRD §8: 반응형 없음)
+   ========================================================= */
+
+.app {
+  width: 880px;
+  margin: 0 auto;
+  padding: var(--s5) var(--s3) var(--s8);
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s5);
+}
+
+.brand {
+  font-size: var(--fs-title);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tabs { display: flex; gap: var(--s1); }
+
+.tab {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  padding: 6px var(--s2);
+}
+.tab:hover { color: var(--text); border-color: transparent; }
+.tab[aria-selected="true"] {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.view[hidden] { display: none; }
+
+/* 카드 */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: var(--s3);
+}
+
+/* 타이머 숫자 — 매초 폭이 흔들리지 않도록 (PRD §7) */
+.timer-value {
+  font-size: var(--fs-timer);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.sub { font-size: var(--fs-sub); color: var(--muted); }
+
+/* 타이머 화면 */
+.timer-card { text-align: center; padding: var(--s6) var(--s3); }
+.timer-card .sub { margin: 0; }
+.session-line { margin-top: var(--s2) !important; }
+
+.controls {
+  display: flex;
+  gap: var(--s1);
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--s4);
+}
+
+/* 지금 어느 과목을 재고 있는지 색으로 붙들어 둔다. 주간 화면의 색과 같은 색이다 */
+.subject-picker { display: inline-flex; align-items: center; gap: var(--s1); }
+.subject-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--whisper);
+  transition: background .2s;
+}
+/* 과목이 바뀌는 순간 한 번 부풀렸다 돌아온다 */
+.subject-dot.switched { animation: dot-pop .45s ease-out; }
+@keyframes dot-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(2); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .subject-dot.switched { animation: none; }
+}
+
+select {
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  padding: var(--s1) var(--s2);
+}
+
+/* 주 버튼은 잉크색. 강조색(--accent)은 진행 바 몫으로 남겨둔다 */
+.btn-primary {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--card);
+  font-weight: 600;
+}
+.btn-primary:hover:not(:disabled) { border-color: var(--text); opacity: .88; }
+.btn-primary:disabled { background: var(--whisper); border-color: var(--whisper); color: var(--card); }
+
+/* 종료는 되돌릴 수 없으니 색으로 구분한다. 다만 시작 버튼보다 눈에 띄면 안 되므로 옅게 깐다 */
+.btn-stop {
+  background: var(--stop-fill);
+  border-color: var(--stop-line);
+  color: var(--stop-ink);
+}
+.btn-stop:hover:not(:disabled) {
+  background: var(--stop-fill-h);
+  border-color: var(--stop-line-h);
+}
+
+.notice { margin: var(--s2) 0 0; font-size: var(--fs-sub); color: var(--accent); }
+
+/* --- 비교 기준 --- */
+.compare {
+  display: flex;
+  justify-content: center;
+  gap: var(--s5);
+  margin-top: var(--s3);
+  font-size: var(--fs-sub);
+}
+.compare-item { display: flex; align-items: baseline; gap: var(--s1); }
+.compare-label { color: var(--muted); }
+.compare-base  { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* 뒤처졌을 때 붉은 마이너스를 쓰지 않는다. 남은 양은 패배가 아니라 다음 목표다 (PRD §6.5) */
+.delta {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px var(--s1);
+  font-variant-numeric: tabular-nums;
+}
+.delta.ahead  { color: var(--done); border-color: var(--done); }
+.delta.behind { color: var(--muted); }
+
+/* --- 목표 진행 바 --- */
+.goal { margin: var(--s6) 0 0; padding-top: 34px; }  /* 34px = 캐릭터가 설 자리 */
+
+.progress {
+  position: relative;
+  height: 12px;
+  background: var(--border);
+  border-radius: 6px;
+}
+
+.fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 6px;
+  transition: width 1s linear, background-color .4s;
+}
+.progress.is-done .fill { background: var(--done); }
+
+/* 결승선 */
+.finish { position: absolute; right: 0; bottom: -4px; width: 2px; height: 38px; background: var(--muted); }
+.finish::after {
+  content: "";
+  position: absolute; left: 2px; top: 0;
+  border-top: 5px solid var(--muted);
+  border-right: 7px solid transparent;
+}
+
+.over-label {
+  position: absolute; left: 50%; bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  font-size: var(--fs-sub); font-weight: 700; color: var(--done);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  캐릭터 위치는 레이어를 옮겨서 잡는다.
+  translateX(%)는 자기 너비 기준이므로 캐릭터에 직접 걸면 바 길이와 무관해진다.
+  레이어 너비를 (바 - 캐릭터)로 두면 100%가 정확히 결승선이 된다.
+*/
+.runner-layer {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: calc(100% - 34px);
+  transform: translateX(0);
+}
+.ready .runner-layer { transition: transform 1s linear; }
+
+.runner { width: 34px; color: var(--accent); transition: color .4s; }
+.progress.is-done .runner { color: var(--done); }
+.runner-svg { display: block; width: 100%; height: auto; }
+
+/* 다리 2프레임 교대. 달리는 동안에만 돈다 */
+@keyframes legFrameA { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+@keyframes legFrameB { 0%, 49% { opacity: 0 } 50%, 100% { opacity: 1 } }
+.legs-b { opacity: 0; }
+.runner.is-running .legs-a { animation: legFrameA .3s infinite; }
+.runner.is-running .legs-b { animation: legFrameB .3s infinite; }
+
+@keyframes hop { 0%, 100% { transform: translateY(0) } 40% { transform: translateY(-9px) } }
+.progress.celebrate .runner-svg { animation: hop .6s ease-out 2; }
+
+.goal-line { margin: var(--s2) 0 0 !important; }
+.goal-empty { margin: var(--s5) 0 0 !important; color: var(--whisper); }
+
+/* 달리기만 끄고 위치 이동은 유지한다 (PRD §7) */
+@media (prefers-reduced-motion: reduce) {
+  .runner.is-running .legs-a,
+  .runner.is-running .legs-b,
+  .progress.celebrate .runner-svg { animation: none; }
+}
+
+.flash { margin: var(--s2) 0 0; font-size: var(--fs-sub); color: var(--muted); }
+
+/* --- 모달 --- */
+dialog.modal {
+  width: 420px;
+  max-width: calc(100vw - 96px);
+  padding: var(--s5);
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+}
+dialog.modal::backdrop { background: rgba(26, 23, 19, .45); }
+
+.modal-title { font-size: var(--fs-title); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 var(--s2); }
+.modal-body  { margin: 0; }
+.rec-span    { margin: var(--s2) 0 0 !important; color: var(--muted); }
+
+.modal-actions { display: flex; flex-direction: column; gap: var(--s1); margin-top: var(--s4); }
+.modal-actions button { padding: 10px var(--s2); }
+.btn-quiet { border-color: transparent; color: var(--muted); background: none; }
+.btn-quiet:hover:not(:disabled) { border-color: var(--border); }
+
+.manual-area { margin-top: var(--s3); }
+.manual-area label { display: block; margin-bottom: var(--s1); }
+.manual-area input {
+  font: inherit; color: inherit; width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  padding: var(--s1) var(--s2);
+  font-variant-numeric: tabular-nums;
+}
+.rec-error { margin: var(--s1) 0 0; font-size: var(--fs-sub); color: var(--accent); }
+
+/* --- 종료 결과 --- */
+dialog.result { width: 380px; text-align: center; }
+
+/* 결승선을 통과하는 캐릭터 — 진행 바의 것을 그대로 재사용한다 (PRD §6.5) */
+.progress.mini { height: 8px; margin: 34px 0 var(--s5); }
+.progress.mini .runner-layer { transition: transform 1.2s cubic-bezier(.32, .72, .38, 1); }
+.progress.mini .finish { height: 34px; bottom: -3px; }
+.progress.mini .runner { color: var(--done); }
+
+.result-label { margin: 0; font-size: var(--fs-sub); color: var(--muted); }
+.result-value {
+  margin: 2px 0 0;
+  font-size: 40px; font-weight: 600; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.res-focus, .res-span { margin: var(--s1) 0 0 !important; }
+.res-span { color: var(--whisper); }
+
+.result-rows {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: var(--s1);
+  text-align: left;
+}
+.result-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); }
+.rr-label { color: var(--muted); font-size: var(--fs-sub); }
+.rr-right { display: flex; align-items: baseline; gap: var(--s1); font-variant-numeric: tabular-nums; }
+
+/* =========================================================
+   주간 · 하루 상세
+   ========================================================= */
+
+.panel-head {
+  display: flex; align-items: center; gap: var(--s2);
+  margin-bottom: var(--s3);
+}
+.panel-title { font-size: var(--fs-title); font-weight: 600; letter-spacing: -0.02em; flex: 1; }
+.panel-value { font-variant-numeric: tabular-nums; font-weight: 600; }
+.nav-btn { padding: 4px 12px; line-height: 1.2; }
+
+.big-value {
+  margin: 2px 0 0;
+  font-size: 36px; font-weight: 600; letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.compare.start { justify-content: flex-start; margin-top: var(--s2); }
+
+/* --- 요일 막대 (차트 라이브러리 없이 div 높이 %) --- */
+.bars {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: var(--s2); margin-top: var(--s6);
+}
+.bar-col {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  background: none; border: 1px solid transparent; border-radius: var(--r-btn);
+  padding: var(--s1) 4px;
+}
+.bar-col:hover { border-color: var(--border); }
+.bar-col.is-today { border-color: var(--border); background: var(--bg); }
+
+.bar-slot {
+  position: relative; width: 100%; height: 150px;
+  display: flex; align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+}
+.bar {
+  width: 100%; min-height: 3px;
+  background: var(--accent);
+  border-radius: 5px 5px 0 0;
+}
+.bar.is-done  { background: var(--done); }
+.bar.is-empty { background: var(--whisper); }
+
+/* 목표선은 날짜마다 그린다. 주중에 목표를 바꿔도 각 날의 기준이 어긋나지 않는다 */
+.goal-tick { position: absolute; left: -2px; right: -2px; border-top: 1px dashed var(--muted); }
+
+.bar-label { font-size: var(--fs-sub); color: var(--muted); }
+.bar-value { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar-col.is-today .bar-label { color: var(--text); font-weight: 600; }
+
+.goal-summary { margin: var(--s4) 0 0 !important; text-align: center; }
+
+/* --- 타임라인 --- */
+.section-head { margin: var(--s5) 0 var(--s1) !important; }
+.section-head.first { margin-top: 0 !important; }
+
+.timeline {
+  position: relative; height: 28px;
+  background: var(--border); border-radius: 6px; overflow: hidden;
+}
+.tl-seg { position: absolute; top: 0; bottom: 0; }
+.tl-seg.pause { background: var(--whisper); }
+
+.tl-ticks {
+  display: flex; justify-content: space-between;
+  margin-top: 6px; font-size: 11px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 구간 목록 --- */
+.seg-list { display: grid; gap: 6px; }
+.seg-row {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 6px var(--s1);
+  border-bottom: 1px solid var(--border);
+}
+.seg-row:last-child { border-bottom: 0; }
+.seg-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.seg-time { font-variant-numeric: tabular-nums; flex: 1; }
+.seg-dur { font-variant-numeric: tabular-nums; color: var(--muted); font-size: var(--fs-sub); }
+.seg-pause { color: var(--whisper); font-size: var(--fs-sub); width: 132px; text-align: right; }
+.seg-row select { width: 132px; padding: 4px var(--s1); font-size: var(--fs-sub); }
+
+/* --- 과목별 분포 --- */
+.dist { display: grid; gap: var(--s1); }
+.dist-row { display: flex; align-items: center; gap: var(--s2); }
+.dist-name { width: 96px; flex: none; }
+.dist-bar { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.dist-bar i { display: block; height: 100%; border-radius: 4px; }
+.dist-val { font-variant-numeric: tabular-nums; font-size: var(--fs-sub); color: var(--muted); width: 88px; text-align: right; }
+
+.empty-note { color: var(--whisper); text-align: center; padding: var(--s4) 0; margin: 0; }
+
+/* =========================================================
+   설정
+   ========================================================= */
+
+.set-card { margin-bottom: var(--s3); }
+.set-title { font-size: var(--fs-body); font-weight: 700; margin: 0 0 var(--s2); }
+.set-note { margin: var(--s2) 0 0 !important; }
+
+.field-row { display: flex; align-items: center; gap: var(--s1); flex-wrap: wrap; }
+.field-row input[type="text"],
+.field-row input[type="number"] {
+  font: inherit; color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  padding: var(--s1) var(--s2);
+  font-variant-numeric: tabular-nums;
+}
+.field-row input[type="number"] { width: 76px; }
+.field-row input[type="text"]   { flex: 1; min-width: 180px; }
+.unit { color: var(--muted); font-size: var(--fs-sub); margin-right: var(--s2); }
+.add-row { margin-top: var(--s2); }
+
+.subject-list { display: grid; gap: 6px; }
+.subject-row {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.subject-row:last-child { border-bottom: 0; }
+.subject-row .subj-name {
+  flex: 1; font: inherit; color: inherit;
+  background: none; border: 1px solid transparent; border-radius: var(--r-btn);
+  padding: 4px var(--s1);
+}
+.subject-row .subj-name:hover { border-color: var(--border); }
+.subject-row .subj-name:focus { border-color: var(--muted); background: var(--bg); outline: none; }
+.subject-row select { padding: 4px var(--s1); font-size: var(--fs-sub); }
+.subject-row.archived .subj-name { color: var(--whisper); }
+
+/* 세그먼트 토글 */
+.seg-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-btn); overflow: hidden; }
+.seg-toggle button { border: 0; border-radius: 0; background: none; color: var(--muted); padding: 6px var(--s3); }
+.seg-toggle button + button { border-left: 1px solid var(--border); }
+.seg-toggle button.on { background: var(--text); color: var(--card); font-weight: 600; }
+
+/* 백업 안내 */
+.backup-due { color: var(--accent) !important; }
+
+/* 타이머 화면의 백업 안내 — 카드 밖에 두어 타이머 자체는 건드리지 않는다 */
+.backup-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  margin-top: var(--s3);
+  padding: 10px var(--s2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-btn);
+  background: var(--card);
+  font-size: var(--fs-sub);
+  color: var(--muted);
+}
+.backup-banner button { padding: 4px 12px; font-size: var(--fs-sub); }
+
+.import-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); margin-top: var(--s3); }
+.import-side { border: 1px solid var(--border); border-radius: var(--r-btn); padding: var(--s2); }
+.import-side p { margin: 0; }
+.import-side p + p { margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">순공</div>
+    <nav class="tabs" role="tablist" aria-label="화면 전환">
+      <button class="tab" role="tab" data-tab="timer"    aria-selected="true"  aria-controls="view-timer">타이머</button>
+      <button class="tab" role="tab" data-tab="week"     aria-selected="false" aria-controls="view-week">주간</button>
+      <button class="tab" role="tab" data-tab="settings" aria-selected="false" aria-controls="view-settings">설정</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="view" id="view-timer" role="tabpanel">
+      <div class="card timer-card">
+        <p class="sub" id="today-label">오늘 순공시간</p>
+        <div class="timer-value" id="today-value">0:00:00</div>
+
+        <!-- 비교 기준 — 절대값만으로는 어떤 감정도 발생하지 않는다 (PRD §2) -->
+        <div class="compare">
+          <div class="compare-item">
+            <span class="compare-label">어제</span>
+            <span class="compare-base" id="cmp-y-base">—</span>
+            <span class="delta" id="cmp-y-delta" hidden></span>
+          </div>
+          <div class="compare-item">
+            <span class="compare-label">7일 평균</span>
+            <span class="compare-base" id="cmp-a-base">—</span>
+            <span class="delta" id="cmp-a-delta" hidden></span>
+          </div>
+        </div>
+
+        <!-- 목표 진행 바 + 달리는 캐릭터 (PRD §7) -->
+        <div class="goal" id="goal-area">
+          <div class="progress" id="progress">
+            <div class="fill" id="bar-fill"></div>
+            <div class="finish" aria-hidden="true"></div>
+            <span class="over-label" id="over-label" hidden>0%</span>
+            <div class="runner-layer" id="runner-layer">
+              <div class="runner" id="runner"></div>
+            </div>
+          </div>
+          <p class="sub goal-line" id="goal-line"></p>
+        </div>
+
+        <p class="sub goal-empty" id="goal-empty" hidden>설정에서 하루 목표를 정하면 진행 바가 나타납니다</p>
+        <p class="sub session-line" id="session-line" hidden></p>
+
+        <div class="controls">
+          <span class="subject-picker">
+            <span class="subject-dot" id="subject-dot" aria-hidden="true"></span>
+            <select id="subject-select" aria-label="과목 선택">
+              <option value="">미분류</option>
+            </select>
+          </span>
+          <button id="btn-start" class="btn-primary">시작</button>
+          <button id="btn-pause" hidden>일시정지</button>
+          <button id="btn-resume" class="btn-primary" hidden>재개</button>
+          <button id="btn-stop" class="btn-stop" hidden>종료</button>
+        </div>
+
+        <p class="notice" id="tab-notice" hidden>다른 탭에서 실행 중입니다. 그 탭에서 이어서 사용하세요.</p>
+        <p class="flash" id="flash" hidden></p>
+      </div>
+
+      <!-- 백업 안내 (§6.11) — 기록은 이 브라우저에만 있다 -->
+      <div class="backup-banner" id="backup-banner" hidden>
+        <span id="backup-banner-text"></span>
+        <button type="button" id="backup-banner-export">지금 내보내기</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-week" role="tabpanel" hidden>
+
+      <div id="week-panel">
+        <div class="panel-head">
+          <button class="nav-btn" id="week-prev" aria-label="이전 주">←</button>
+          <span class="panel-title" id="week-range"></span>
+          <button class="nav-btn" id="week-next" aria-label="다음 주">→</button>
+        </div>
+
+        <div class="card">
+          <p class="sub" id="week-total-label">이번 주</p>
+          <p class="big-value" id="week-total">0시간</p>
+
+          <div class="compare start">
+            <div class="compare-item">
+              <span class="compare-label">지난주</span>
+              <span class="compare-base" id="week-prev-base">—</span>
+              <span class="delta" id="week-delta" hidden></span>
+            </div>
+          </div>
+
+          <div class="bars" id="week-bars"></div>
+          <p class="sub goal-summary" id="week-goal-line"></p>
+        </div>
+      </div>
+
+      <div id="day-panel" hidden>
+        <div class="panel-head">
+          <button class="nav-btn" id="day-back" aria-label="주간으로 돌아가기">←</button>
+          <span class="panel-title" id="day-title"></span>
+          <span class="panel-value" id="day-total"></span>
+        </div>
+
+        <div class="card">
+          <p class="sub section-head first">타임라인</p>
+          <div class="timeline" id="day-timeline"></div>
+          <div class="tl-ticks" id="day-ticks"></div>
+
+          <p class="sub section-head">구간</p>
+          <div class="seg-list" id="day-segments"></div>
+
+          <p class="sub section-head">과목별</p>
+          <div class="dist" id="day-dist"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="view" id="view-settings" role="tabpanel" hidden>
+
+      <div class="card set-card">
+        <h2 class="set-title">과목</h2>
+        <div class="subject-list" id="subject-list"></div>
+        <div class="field-row add-row">
+          <input type="text" id="new-subject" placeholder="새 과목 이름" maxlength="20">
+          <button class="btn-primary" id="add-subject">추가</button>
+        </div>
+        <div id="archived-wrap" hidden>
+          <p class="sub set-note">보관된 과목</p>
+          <div class="subject-list" id="archived-list"></div>
+        </div>
+      </div>
+
+      <div class="card set-card">
+        <h2 class="set-title">하루 목표</h2>
+        <div class="field-row">
+          <input type="number" id="goal-h" min="0" max="23" step="1"><span class="unit">시간</span>
+          <input type="number" id="goal-m" min="0" max="55" step="5"><span class="unit">분</span>
+        </div>
+        <p class="sub set-note" id="goal-note"></p>
+      </div>
+
+      <div class="card set-card">
+        <h2 class="set-title">하루 경계</h2>
+        <div class="field-row"><select id="boundary-hour"></select></div>
+        <p class="sub set-note">
+          하루가 이 시각에 시작해 다음 날 같은 시각에 끝납니다. 밤 11시~새벽 1시 공부는 전날 기록으로 산입됩니다.
+          이미 저장된 기록의 소속 날짜는 바뀌지 않습니다.
+        </p>
+      </div>
+
+      <div class="card set-card">
+        <h2 class="set-title">일시정지 자동 종료</h2>
+        <div class="field-row"><select id="pause-timeout"></select></div>
+        <p class="sub set-note">
+          일시정지가 이보다 길어지면 세션을 종료합니다. 종료 시각은 일시정지를 누른 시점으로 소급됩니다.
+        </p>
+      </div>
+
+      <div class="card set-card">
+        <h2 class="set-title">화면</h2>
+        <div class="seg-toggle" id="theme-toggle">
+          <button data-theme-value="system">시스템</button>
+          <button data-theme-value="light">라이트</button>
+          <button data-theme-value="dark">다크</button>
+        </div>
+      </div>
+
+      <div class="card set-card">
+        <h2 class="set-title">백업</h2>
+        <p class="sub set-note" id="backup-note"></p>
+        <div class="field-row">
+          <button class="btn-primary" id="export-btn">내보내기</button>
+          <button id="import-btn">가져오기</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </div>
+        <p class="sub set-note">
+          브라우저 저장은 캐시 삭제 한 번으로 사라집니다. 기록이 쌓일수록 소실의 타격이 커지므로,
+          백업은 선택 기능이 아닙니다.
+        </p>
+      </div>
+
+    </section>
+  </main>
+
+</div>
+
+<!-- 캐릭터 원본. 타이머와 결과 화면이 같은 것을 복제해 쓴다 -->
+<template id="runner-tpl">
+  <svg class="runner-svg" viewBox="0 0 32 26" fill="currentColor" aria-hidden="true">
+    <!-- 다리 2프레임: a는 선 자세, b는 뻗은 자세 -->
+    <g class="legs legs-a" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <line x1="12" y1="16" x2="11" y2="22"/>
+      <line x1="19" y1="16" x2="20" y2="22"/>
+    </g>
+    <g class="legs legs-b" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+      <line x1="12" y1="16" x2="7"  y2="21"/>
+      <line x1="19" y1="16" x2="24" y2="21"/>
+    </g>
+    <path d="M8 12 C 3 11, 2 7, 4 4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="15" cy="12" rx="8" ry="4.6"/>
+    <circle cx="24" cy="8.5" r="3.8"/>
+    <path d="M22.2 5.6 L23.4 1.6 L25.6 4.6 Z"/>
+    <path d="M27 8.2 L31 9 L27 10.2 Z"/>
+    <circle cx="24.8" cy="7.9" r="0.85" fill="var(--card)"/>
+  </svg>
+</template>
+
+<!-- 끊긴 세션 복구 (PRD §6.4)
+     근거 없이 "언제까지 하셨나요?"라고 물으면 숫자가 부풀고, 어제 대비 비교가 무의미해진다.
+     하트비트가 그 근거다. -->
+<dialog class="modal" id="recovery-modal">
+  <h2 class="modal-title">기록이 끊겼어요</h2>
+  <p class="modal-body" id="rec-msg"></p>
+  <p class="sub rec-span" id="rec-span"></p>
+
+  <div class="modal-actions" id="rec-choices">
+    <button class="btn-primary" id="rec-save">여기까지 저장</button>
+    <button id="rec-manual">시간 직접 입력</button>
+    <button class="btn-quiet" id="rec-discard">버리기</button>
+  </div>
+
+  <div class="manual-area" id="rec-manual-area" hidden>
+    <label class="sub" for="rec-time">공부를 끝낸 시각</label>
+    <input type="datetime-local" id="rec-time">
+    <p class="rec-error" id="rec-error" hidden></p>
+    <div class="modal-actions">
+      <button class="btn-primary" id="rec-manual-ok">이 시각으로 저장</button>
+      <button class="btn-quiet" id="rec-manual-back">돌아가기</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- 가져오기 확인 (PRD §6.11) — 되돌릴 수 없는 덮어쓰기다 -->
+<dialog class="modal" id="import-modal">
+  <h2 class="modal-title">가져오기</h2>
+  <p class="modal-body">지금 기록을 모두 지우고 이 파일의 내용으로 대체합니다. 되돌릴 수 없습니다.</p>
+
+  <div class="import-compare">
+    <div class="import-side">
+      <p class="sub">가져올 파일</p>
+      <p id="imp-new"></p>
+      <p class="sub" id="imp-new-range"></p>
+    </div>
+    <div class="import-side">
+      <p class="sub">지금 기록</p>
+      <p id="imp-cur"></p>
+      <p class="sub" id="imp-cur-range"></p>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn-primary" id="imp-ok">덮어쓰고 가져오기</button>
+    <button class="btn-quiet" id="imp-cancel">취소</button>
+  </div>
+</dialog>
+
+<!-- 종료 결과 (PRD §6.5)
+     방금 공부를 끝냈고 아직 자리에 앉아 있는, 감정이 가장 크게 움직이는 시점이다. -->
+<dialog class="modal result" id="result-modal">
+  <div class="progress mini" id="finish-run">
+    <div class="finish" aria-hidden="true"></div>
+    <div class="runner-layer" id="result-runner-layer">
+      <div class="runner" id="result-runner"></div>
+    </div>
+  </div>
+
+  <p class="result-label">이번 세션</p>
+  <p class="result-value" id="res-session"></p>
+  <p class="sub res-focus" id="res-focus"></p>
+  <p class="sub res-span" id="res-span"></p>
+
+  <div class="result-rows">
+    <div class="result-row">
+      <span class="rr-label">오늘 누적</span>
+      <span class="rr-right"><span id="res-today"></span></span>
+    </div>
+    <div class="result-row">
+      <span class="rr-label">어제</span>
+      <span class="rr-right">
+        <span id="res-yesterday"></span>
+        <span class="delta" id="res-delta" hidden></span>
+      </span>
+    </div>
+  </div>
+
+  <div class="modal-actions">
+    <button class="btn-primary" id="res-close">닫기</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* =========================================================
+   저장소 — localStorage (PRD §6.10)
+   ========================================================= */
+
+const KEYS = {
+  settings: "study:settings",
+  subjects: "study:subjects",
+  goal:     "study:goal",
+  segments: "study:segments",
+  active:   "study:active",
+};
+
+const DEFAULT_SETTINGS = {
+  dayBoundaryHour: 5,   // 하루 경계 05:00
+  pauseTimeoutMin: 30,  // 일시정지 자동 종료 임계
+  theme: "system",      // system | light | dark
+  lastBackupAt: null,   // 백업 안내 배지 판정용 (PRD §6.11)
+  version: 1,
+};
+
+/* 과목 8색 — 순서대로 자동 배정 (PRD §7)
+   색상은 CSS 토큰 이름으로 저장한다. 그래야 다크 모드에서 자동으로 대응된다. */
+const SUBJECT_PALETTE = [
+  { token: "--subj-1", label: "테라코타" },
+  { token: "--subj-2", label: "올리브"   },
+  { token: "--subj-3", label: "머스터드" },
+  { token: "--subj-4", label: "세이지"   },
+  { token: "--subj-5", label: "클레이"   },
+  { token: "--subj-6", label: "인디고"   },
+  { token: "--subj-7", label: "로즈"     },
+  { token: "--subj-8", label: "코코아"   },
+];
+
+function uid() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+}
+
+function readJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch (e) {
+    console.warn("[순공] 읽기 실패:", key, e);
+    return fallback;
+  }
+}
+
+function writeJSON(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (e) {
+    console.error("[순공] 저장 실패:", key, e);
+    return false;
+  }
+}
+
+/* 인메모리 캐시. 화면은 항상 db를 읽고, 변경 후 save*()로 내려쓴다. */
+const db = {
+  settings: Object.assign({}, DEFAULT_SETTINGS, readJSON(KEYS.settings, {})),
+  subjects: readJSON(KEYS.subjects, []),
+  /* PRD의 goal은 단일 객체지만, 목표 변경 시 지난주 달성률이 소급되지 않으려면
+     과거 목표 값이 남아 있어야 한다. 이력 배열로 저장한다. */
+  goals:    readJSON(KEYS.goal, []),
+  segments: readJSON(KEYS.segments, []),
+  active:   readJSON(KEYS.active, null),
+};
+
+const saveSettings = () => writeJSON(KEYS.settings, db.settings);
+const saveSubjects = () => writeJSON(KEYS.subjects, db.subjects);
+const saveGoals    = () => writeJSON(KEYS.goal,     db.goals);
+const saveSegments = () => writeJSON(KEYS.segments, db.segments);
+const saveActive   = () => db.active === null
+  ? localStorage.removeItem(KEYS.active)
+  : writeJSON(KEYS.active, db.active);
+
+/* =========================================================
+   하루 경계 (PRD §6.8)
+   기본 05:00. 밤 11시~새벽 1시 공부는 전날 기록으로 산입된다.
+   ========================================================= */
+
+function toDateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** 시각 → 그 시각이 속한 studyDate */
+function studyDateOf(ts) {
+  const d = new Date(ts);
+  d.setHours(d.getHours() - db.settings.dayBoundaryHour);
+  return toDateKey(d);
+}
+
+function addDays(dateKey, n) {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  dt.setDate(dt.getDate() + n);
+  return toDateKey(dt);
+}
+
+/** studyDate가 실제로 시작되는 시각 (그날 05:00) */
+function boundaryStartOf(dateKey) {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  return new Date(y, m - 1, d, db.settings.dayBoundaryHour, 0, 0, 0).getTime();
+}
+const boundaryEndOf = (dateKey) => boundaryStartOf(addDays(dateKey, 1));
+
+const todayKey     = () => studyDateOf(Date.now());
+const yesterdayKey = () => addDays(todayKey(), -1);
+
+/* ---------------------------------------------------------
+   세션 귀속 규칙
+   세션은 '시작한 시점의 studyDate'에 통째로 귀속된다. 경계를 넘어도 자르지 않는다.
+   23:00에 시작해 08:00에 끝낸 9시간은 전부 시작한 날의 기록이다.
+
+   왜 자르지 않는가
+   - 밤샘은 사용자에게 한 덩어리의 공부다. 05:00에 쪼개면 어느 쪽도 실제 공부량으로 읽히지 않는다
+   - 타이머를 켠 채 05:00을 넘길 때 화면의 오늘 시간이 0으로 떨어지는 문제가 사라진다
+   대신 결과 화면과 주간 상세에서 실제 시각 범위를 그대로 표기해
+   "이 기록은 다음 날 새벽까지 이어진 것"임을 숨기지 않는다. (fmtSpan)
+
+   구간이 아니라 세션 단위로 귀속되므로, 세션 중 과목을 바꿔 열린 새 구간도
+   자기 시작 시각이 아니라 세션 기준일(active.studyDate)을 물려받는다.
+   그러지 않으면 05:30의 과목 교체 하나로 세션이 두 날로 갈라진다.
+   --------------------------------------------------------- */
+
+/** 구간이 소속 studyDate의 경계를 넘어 이어졌는가 (표기 시 실제 범위를 밝혀야 하는 구간) */
+const crossesDayBoundary = (seg) =>
+  seg.endedAt != null && seg.endedAt > boundaryEndOf(seg.studyDate);
+
+/** 세션 전체의 시작·종료 시각 */
+function sessionSpanOf(sessionId) {
+  const segs = db.segments.filter((s) => s.sessionId === sessionId);
+  if (segs.length === 0) return null;
+  return {
+    startedAt: Math.min(...segs.map((s) => s.startedAt)),
+    endedAt:   Math.max(...segs.map((s) => s.endedAt ?? s.startedAt)),
+  };
+}
+
+/* =========================================================
+   집계
+   순공시간 = kind === 'study' 구간의 합
+   총 체류시간 = 전체 구간의 합  (PRD §6.10)
+   ========================================================= */
+
+const durationOf = (s) => Math.max(0, (s.endedAt ?? s.startedAt) - s.startedAt);
+
+function segmentsOn(dateKey) {
+  return db.segments.filter((s) => s.studyDate === dateKey);
+}
+
+function studyMsOn(dateKey) {
+  return segmentsOn(dateKey)
+    .filter((s) => s.kind === "study")
+    .reduce((sum, s) => sum + durationOf(s), 0);
+}
+
+function totalMsOn(dateKey) {
+  return segmentsOn(dateKey).reduce((sum, s) => sum + durationOf(s), 0);
+}
+
+/** 최근 7일 평균 — 오늘은 진행 중이므로 제외하고 어제부터 7일을 기준선으로 삼는다 */
+function avg7MsBefore(dateKey) {
+  let sum = 0;
+  for (let i = 1; i <= 7; i++) sum += studyMsOn(addDays(dateKey, -i));
+  return Math.round(sum / 7);
+}
+
+/** 하루의 과목별 분포. subjectId가 null인 구간은 '미분류'로 묶인다 (PRD §6.6) */
+function subjectBreakdownOn(dateKey) {
+  const map = new Map();
+  for (const s of segmentsOn(dateKey)) {
+    if (s.kind !== "study") continue;
+    const key = s.subjectId ?? "__none__";
+    map.set(key, (map.get(key) || 0) + durationOf(s));
+  }
+  return [...map.entries()]
+    .map(([subjectId, ms]) => ({
+      subjectId: subjectId === "__none__" ? null : subjectId,
+      ms,
+    }))
+    .sort((a, b) => b.ms - a.ms);
+}
+
+/** 월요일 시작 7일 키 */
+function weekKeysOf(dateKey) {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const dow = new Date(y, m - 1, d).getDay();       // 0=일
+  const back = dow === 0 ? 6 : dow - 1;             // 월요일까지 되감기
+  const monday = addDays(dateKey, -back);
+  return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+}
+
+/* =========================================================
+   목표 (PRD §6.7)
+   하루 목표 하나만. effectiveFrom 이력으로 소급 변경을 막는다.
+   ========================================================= */
+
+function goalMinutesOn(dateKey) {
+  let best = null;
+  for (const g of db.goals) {
+    if (g.effectiveFrom <= dateKey && (!best || g.effectiveFrom > best.effectiveFrom)) best = g;
+  }
+  return best ? best.targetMinutes : null;
+}
+
+function setGoalMinutes(targetMinutes) {
+  const from = todayKey();
+  const existing = db.goals.find((g) => g.effectiveFrom === from);
+  if (existing) existing.targetMinutes = targetMinutes;
+  else db.goals.push({ targetMinutes, effectiveFrom: from });
+  db.goals.sort((a, b) => a.effectiveFrom.localeCompare(b.effectiveFrom));
+  saveGoals();
+}
+
+/* =========================================================
+   과목
+   ========================================================= */
+
+const subjectById = (id) => db.subjects.find((s) => s.id === id) || null;
+
+/** 저장된 color가 토큰이면 var()로 감싼다. 사용자 지정 hex는 그대로 통과 */
+const resolveColor = (color) =>
+  !color ? "var(--whisper)" : color.startsWith("--") ? `var(${color})` : color;
+
+const subjectColorOf = (id) =>
+  id === null ? "var(--whisper)" : resolveColor(subjectById(id)?.color);
+
+const subjectNameOf = (id) =>
+  id === null ? "미분류" : subjectById(id)?.name ?? "삭제된 과목";
+
+/** 다음 과목에 배정할 색. 8색을 순서대로 돌려 쓴다 */
+function nextSubjectColor() {
+  const used = new Set(db.subjects.map((s) => s.color));
+  const free = SUBJECT_PALETTE.find((p) => !used.has(p.token));
+  return (free || SUBJECT_PALETTE[db.subjects.length % SUBJECT_PALETTE.length]).token;
+}
+
+function createSubject(name) {
+  const subject = {
+    id: uid(),
+    name: name.trim(),
+    color: nextSubjectColor(),
+    order: db.subjects.length,
+    archived: false,
+  };
+  db.subjects.push(subject);
+  saveSubjects();
+  return subject;
+}
+
+const activeSubjects = () =>
+  db.subjects.filter((s) => !s.archived).sort((a, b) => a.order - b.order);
+
+/* =========================================================
+   시간 표기
+   ========================================================= */
+
+/** 2:47:13 — 탭 제목과 타이머 숫자용 */
+function fmtHMS(ms) {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(t / 3600);
+  const m = String(Math.floor((t % 3600) / 60)).padStart(2, "0");
+  const s = String(t % 60).padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
+
+/** 2시간 20분 — 읽는 문장 안에서 쓰는 표기 */
+function fmtHM(ms) {
+  const total = Math.max(0, Math.round(ms / 60000));
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  if (h === 0) return `${m}분`;
+  if (m === 0) return `${h}시간`;
+  return `${h}시간 ${m}분`;
+}
+
+const fmtClock = (ts) => {
+  const d = new Date(ts);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+};
+
+const fmtMonthDay = (ts) => {
+  const d = new Date(ts);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+};
+
+/**
+ * 세션의 실제 시각 범위.
+ *   같은 날      8월 12일 14:00 ~ 16:20
+ *   경계 넘김    8월 12일 23:00 ~ 8월 13일 08:00
+ * 세션을 자르지 않는 대신, 이 표기가 기록이 언제까지 이어졌는지를 드러낸다.
+ */
+function fmtSpan(startedAt, endedAt) {
+  const sameCalendarDay = toDateKey(new Date(startedAt)) === toDateKey(new Date(endedAt));
+  return sameCalendarDay
+    ? `${fmtMonthDay(startedAt)} ${fmtClock(startedAt)} ~ ${fmtClock(endedAt)}`
+    : `${fmtMonthDay(startedAt)} ${fmtClock(startedAt)} ~ ${fmtMonthDay(endedAt)} ${fmtClock(endedAt)}`;
+}
+
+/* =========================================================
+   테마
+   ========================================================= */
+
+function applyTheme() {
+  const t = db.settings.theme;
+  if (t === "system") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", t);
+}
+applyTheme();
+
+/* =========================================================
+   타이머 코어 (PRD §6.1~6.4, §6.9)
+
+   모든 전이는 동일한 동작이다: 열린 구간을 닫고, 새 구간을 연다.
+   ========================================================= */
+
+const HEARTBEAT_MS   = 30 * 1000;  // 하트비트 간격
+const STALE_MS       = 2 * 60 * 1000;  // 이 이상 끊기면 복구 대상
+const MIN_SESSION_MS = 60 * 1000;  // 1분 미만 세션은 폐기
+
+/* 일시정지 자동 종료를 빠르게 확인하고 싶을 때만 값을 넣는다 (예: 10 * 1000).
+   null이면 설정값(pauseTimeoutMin)을 쓴다. */
+const PAUSE_TIMEOUT_OVERRIDE_MS = null;
+
+/** 탭 식별자. sessionStorage에 두어 새로고침에는 유지되고 다른 탭과는 구분된다.
+    localStorage에 두면 모든 탭이 같은 값을 보게 되고, 메모리에만 두면
+    새로고침한 자기 탭을 '남의 탭'으로 오인해 스스로 잠근다. */
+const TAB_ID = (() => {
+  let id = sessionStorage.getItem("study:tabId");
+  if (!id) { id = uid(); sessionStorage.setItem("study:tabId", id); }
+  return id;
+})();
+
+/* --- 구간 열고 닫기 --- */
+
+function openSegment(kind, subjectId, at) {
+  db.active.openSegment = {
+    id: uid(),
+    kind,
+    subjectId: subjectId ?? null,
+    startedAt: at,
+  };
+}
+
+function closeOpenSegment(at) {
+  const open = db.active?.openSegment;
+  if (!open) return;
+  if (at > open.startedAt) {
+    db.segments.push({
+      id: open.id,
+      sessionId: db.active.sessionId,
+      subjectId: open.subjectId,
+      kind: open.kind,
+      startedAt: open.startedAt,
+      endedAt: at,
+      studyDate: db.active.studyDate,  // 세션 기준일을 물려받는다 (§6.8)
+    });
+    saveSegments();
+  }
+  db.active.openSegment = null;
+}
+
+/** PRD §6.1의 전이 함수. 시작·과목교체·일시정지·재개가 모두 이 하나를 지난다. */
+function transition(nextKind, subjectId, at = Date.now()) {
+  if (!db.active) return;
+  closeOpenSegment(at);
+  if (nextKind) {
+    openSegment(nextKind, subjectId, at);
+    db.active.status = nextKind === "study" ? "running" : "paused";
+    if (nextKind === "study") db.active.currentSubjectId = subjectId ?? null;
+  }
+  db.active.lastHeartbeatAt = at;
+  saveActive();
+  broadcast();
+  render();
+}
+
+/* --- 세션 --- */
+
+function startSession(subjectId = null) {
+  if (db.active || isOwnedByOtherTab()) return;
+  const now = Date.now();
+  db.active = {
+    sessionId: uid(),
+    studyDate: studyDateOf(now),   // 세션 기준일. 이후 경계를 넘어도 바뀌지 않는다
+    status: "running",
+    currentSubjectId: subjectId,
+    openSegment: null,
+    lastHeartbeatAt: now,
+    tabId: TAB_ID,
+  };
+  transition("study", subjectId, now);
+}
+
+const pauseSession  = () => db.active?.status === "running" && transition("pause", db.active.currentSubjectId);
+const resumeSession = () => db.active?.status === "paused"  && transition("study", db.active.currentSubjectId);
+
+function switchSubject(subjectId) {
+  if (!db.active) return;
+  const from = db.active.currentSubjectId ?? null;
+  const to = subjectId ?? null;
+  if (from === to) return;
+
+  if (db.active.status === "paused") {         // 일시정지 중 교체는 재개 없이 과목만 바꾼다
+    db.active.currentSubjectId = to;
+    saveActive(); broadcast(); render();
+    hooks.onSubjectSwitch({ from, to, ms: 0, paused: true });
+    return;
+  }
+
+  // 방금 닫히는 구간의 길이. 무엇이 기록됐는지 알려주려면 transition 전에 재야 한다
+  const open = db.active.openSegment;
+  const ms = open?.kind === "study" ? Date.now() - open.startedAt : 0;
+  transition("study", to);
+  hooks.onSubjectSwitch({ from, to, ms, paused: false });
+}
+
+/**
+ * 세션 종료. 결과 화면에 쓸 요약을 돌려준다.
+ * at을 넘기면 그 시각으로 소급 종료한다 (일시정지 자동 종료, 세션 복구).
+ */
+function stopSession(at = Date.now()) {
+  if (!db.active) return null;
+  const { sessionId, studyDate } = db.active;
+
+  closeOpenSegment(at);
+
+  const segs = db.segments.filter((s) => s.sessionId === sessionId);
+  const studyMs = segs.filter((s) => s.kind === "study").reduce((sum, s) => sum + durationOf(s), 0);
+  const totalMs = segs.reduce((sum, s) => sum + durationOf(s), 0);
+
+  let summary = null;
+  if (studyMs < MIN_SESSION_MS) {
+    // 1분 미만으로 끝난 세션은 저장하지 않고 폐기한다 (§6.2)
+    db.segments = db.segments.filter((s) => s.sessionId !== sessionId);
+    saveSegments();
+  } else {
+    summary = Object.assign({ sessionId, studyDate, studyMs, totalMs }, sessionSpanOf(sessionId));
+  }
+
+  db.active = null;
+  saveActive();
+  broadcast();
+  render();
+  return summary;
+}
+
+/* --- 일시정지 자동 종료 (§6.3) --- */
+
+/**
+ * 임계값을 넘긴 일시정지를 종료 처리한다.
+ * 백그라운드 타이머를 돌리지 않는다. 앱이 떠 있는 동안의 틱과 앱 진입 시점에만 비교한다.
+ * 종료 시각은 일시정지를 누른 시점으로 소급하므로 pause 구간은 길이 0이 되어 버려진다.
+ */
+function checkPauseTimeout() {
+  const open = db.active?.openSegment;
+  if (!db.active || db.active.status !== "paused" || !open) return false;
+  const limitMs = PAUSE_TIMEOUT_OVERRIDE_MS ?? db.settings.pauseTimeoutMin * 60000;
+  if (Date.now() - open.startedAt <= limitMs) return false;
+  hooks.onAutoStop(stopSession(open.startedAt));
+  return true;
+}
+
+/* --- 세션 복구 (§6.4) --- */
+
+/* 코어는 사실만 알린다. 화면에 어떻게 보일지는 아래 UI 절에서 갈아끼운다. */
+const hooks = {
+  onAutoStop: (summary) => console.info("[순공] 일시정지 자동 종료", summary),
+  onSessionEnd: (summary) => console.info("[순공] 세션 종료", summary),
+  onSubjectSwitch: (info) => console.info("[순공] 과목 전환", info),
+  onRecoveryNeeded: (info) => {
+    console.warn("[순공] 끊긴 세션 — 마지막 활동 시각까지 저장", new Date(info.lastActivityAt));
+    recovery.saveUntil(info.lastActivityAt);
+  },
+};
+
+const recovery = {
+  pending: null,
+
+  /** 마지막 활동 시각(또는 사용자가 입력한 시각)까지만 인정하고 확정 */
+  saveUntil(ts) {
+    if (!db.active) return null;
+    db.active.tabId = TAB_ID;
+    const summary = stopSession(Math.max(ts, db.active.openSegment?.startedAt ?? ts));
+    this.pending = null;
+    render();
+    return summary;
+  },
+
+  /** 세션 통째로 버리기 */
+  discard() {
+    if (!db.active) return;
+    const id = db.active.sessionId;
+    db.segments = db.segments.filter((s) => s.sessionId !== id);
+    saveSegments();
+    db.active = null;
+    saveActive();
+    this.pending = null;
+    broadcast();
+    render();
+  },
+};
+
+/* --- 다중 탭 (§6.9) --- */
+
+const channel = "BroadcastChannel" in window ? new BroadcastChannel("study:sync") : null;
+
+function broadcast() {
+  channel?.postMessage({ from: TAB_ID });
+}
+
+/** 다른 탭이 살아서 세션을 쥐고 있는가 */
+function isOwnedByOtherTab() {
+  return !!db.active
+    && db.active.tabId !== TAB_ID
+    && Date.now() - (db.active.lastHeartbeatAt ?? 0) < STALE_MS;
+}
+
+function reloadFromStorage() {
+  db.subjects = readJSON(KEYS.subjects, []);
+  db.goals    = readJSON(KEYS.goal, []);
+  db.segments = readJSON(KEYS.segments, []);
+  db.active   = readJSON(KEYS.active, null);
+}
+
+channel?.addEventListener("message", (e) => {
+  if (e.data?.from === TAB_ID) return;
+  reloadFromStorage();
+  render();
+});
+
+/* BroadcastChannel이 없는 환경 대비 */
+window.addEventListener("storage", (e) => {
+  if (!e.key || !e.key.startsWith("study:")) return;
+  reloadFromStorage();
+  render();
+});
+
+/* --- 진행 중 시간 --- */
+
+/* 복구 대기 중인 세션은 아직 확정되지 않았다. 끊긴 뒤 흐른 시간이
+   화면과 탭 제목에 그대로 더해지면 실제보다 훨씬 큰 숫자가 보인다. */
+const awaitingRecovery = () => recovery.pending !== null;
+
+/** 진행 중인 세션이 있으면 그 세션의 기준일을 따른다 (§6.8) */
+const activeDateKey = () =>
+  (awaitingRecovery() ? null : db.active?.studyDate) ?? todayKey();
+
+function openElapsed(kind) {
+  if (awaitingRecovery()) return 0;
+  const open = db.active?.openSegment;
+  if (!open || open.kind !== kind) return 0;
+  return Date.now() - open.startedAt;
+}
+
+const todayStudyMs = () => studyMsOn(activeDateKey()) + openElapsed("study");
+
+function sessionMs(kindFilter) {
+  if (!db.active) return 0;
+  const id = db.active.sessionId;
+  const closed = db.segments
+    .filter((s) => s.sessionId === id && (!kindFilter || s.kind === kindFilter))
+    .reduce((sum, s) => sum + durationOf(s), 0);
+  const open = db.active.openSegment;
+  const live = open && (!kindFilter || open.kind === kindFilter) ? Date.now() - open.startedAt : 0;
+  return closed + live;
+}
+
+/* --- 탭 제목 (§6.2) --- */
+
+function updateTitle() {
+  if (!db.active || awaitingRecovery()) { document.title = "순공"; return; }
+  const mark = db.active.status === "paused" ? "⏸ " : "";
+  document.title = `${mark}${fmtHMS(todayStudyMs())} · 순공`;
+}
+
+/* --- 화면 갱신 --- */
+
+const els = {
+  todayLabel:  document.getElementById("today-label"),
+  todayValue:  document.getElementById("today-value"),
+  sessionLine: document.getElementById("session-line"),
+  subjectSel:  document.getElementById("subject-select"),
+  subjectDot:  document.getElementById("subject-dot"),
+  start:  document.getElementById("btn-start"),
+  pause:  document.getElementById("btn-pause"),
+  resume: document.getElementById("btn-resume"),
+  stop:   document.getElementById("btn-stop"),
+  notice: document.getElementById("tab-notice"),
+
+  yBase: document.getElementById("cmp-y-base"),
+  yDelta: document.getElementById("cmp-y-delta"),
+  aBase: document.getElementById("cmp-a-base"),
+  aDelta: document.getElementById("cmp-a-delta"),
+
+  goalArea:   document.getElementById("goal-area"),
+  goalEmpty:  document.getElementById("goal-empty"),
+  goalLine:   document.getElementById("goal-line"),
+  progress:   document.getElementById("progress"),
+  fill:       document.getElementById("bar-fill"),
+  overLabel:  document.getElementById("over-label"),
+  runnerLayer: document.getElementById("runner-layer"),
+  runner:     document.getElementById("runner"),
+};
+
+/* --- 비교 기준 (§2) --- */
+
+/**
+ * 뒤처졌을 때 -3시간으로 적으면, 하루가 끝나지도 않았는데 패배로 읽힌다.
+ * 남은 시간으로 적으면 같은 정보가 다음 세션의 목표가 된다. (§6.5의 규칙을 대시보드에도 적용)
+ */
+function renderDelta(el, baseMs, currentMs, behindWord = "남음") {
+  if (baseMs === 0) { el.hidden = true; return; }
+  el.hidden = false;
+  const ahead = currentMs >= baseMs;
+  el.textContent = ahead ? `+${fmtHM(currentMs - baseMs)}` : `${fmtHM(baseMs - currentMs)} ${behindWord}`;
+  el.className = `delta ${ahead ? "ahead" : "behind"}`;
+}
+
+function renderCompare(dateKey, todayMs) {
+  const yMs = studyMsOn(addDays(dateKey, -1));
+  const aMs = avg7MsBefore(dateKey);
+  els.yBase.textContent = yMs === 0 ? "기록 없음" : fmtHM(yMs);
+  els.aBase.textContent = aMs === 0 ? "기록 없음" : fmtHM(aMs);
+  renderDelta(els.yDelta, yMs, todayMs);
+  renderDelta(els.aDelta, aMs, todayMs);
+}
+
+/* --- 목표 진행 바 + 캐릭터 (§7) --- */
+
+let wasBelowGoal = true;
+let progressPrimed = false;  // 첫 렌더에서 축하 연출이 터지지 않게 한다
+
+function renderProgress(dateKey, todayMs, running) {
+  const goalMin = goalMinutesOn(dateKey);
+  const hasGoal = goalMin != null && goalMin > 0;   // 0은 '목표 없음'과 같다
+
+  els.goalArea.hidden  = !hasGoal;
+  els.goalEmpty.hidden = hasGoal;
+  if (!hasGoal) return;
+
+  const goalMs = goalMin * 60000;
+  const ratio = goalMs > 0 ? todayMs / goalMs : 0;
+  const capped = Math.min(ratio, 1);
+  const pct = Math.round(ratio * 100);
+  const done = ratio >= 1;
+
+  els.fill.style.width = `${capped * 100}%`;
+
+  // 초과 달성이면 결승선 너머에 선다
+  els.runnerLayer.style.transform = ratio > 1
+    ? "translateX(100%) translateX(20px)"
+    : `translateX(${capped * 100}%)`;
+
+  els.progress.classList.toggle("is-done", done);
+  els.runner.classList.toggle("is-running", running);
+
+  els.overLabel.hidden = ratio <= 1;
+  els.overLabel.textContent = `${pct}%`;
+  els.goalLine.textContent = done
+    ? `목표 ${fmtHM(goalMs)} 달성`
+    : `목표 ${fmtHM(goalMs)} · ${pct}%`;
+
+  // 결승선을 막 통과한 순간에만 축하 연출 (§7)
+  if (done && wasBelowGoal && running && progressPrimed) {
+    els.progress.classList.add("celebrate");
+    setTimeout(() => els.progress.classList.remove("celebrate"), 1300);
+  }
+  wasBelowGoal = !done;
+  progressPrimed = true;
+}
+
+/* =========================================================
+   복구 모달 · 종료 결과 (PRD §6.4, §6.5)
+   ========================================================= */
+
+const modals = {
+  recovery: document.getElementById("recovery-modal"),
+  result:   document.getElementById("result-modal"),
+  recMsg:      document.getElementById("rec-msg"),
+  recSpan:     document.getElementById("rec-span"),
+  recChoices:  document.getElementById("rec-choices"),
+  recManual:   document.getElementById("rec-manual-area"),
+  recTime:     document.getElementById("rec-time"),
+  recError:    document.getElementById("rec-error"),
+  resSession:   document.getElementById("res-session"),
+  resFocus:     document.getElementById("res-focus"),
+  resSpan:      document.getElementById("res-span"),
+  resToday:     document.getElementById("res-today"),
+  resYesterday: document.getElementById("res-yesterday"),
+  resDelta:     document.getElementById("res-delta"),
+  resultRunner:      document.getElementById("result-runner"),
+  resultRunnerLayer: document.getElementById("result-runner-layer"),
+  flash: document.getElementById("flash"),
+};
+
+let flashTimer = null;
+function flash(message) {
+  modals.flash.textContent = message;
+  modals.flash.hidden = false;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => { modals.flash.hidden = true; }, 5000);
+}
+
+const toLocalInput = (ts) => {
+  const d = new Date(ts);
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+
+/* --- 종료 결과 --- */
+
+function openResult(summary) {
+  // 1분 미만이라 폐기된 세션은 보여줄 결과가 없다 (§6.2)
+  if (!summary) { flash("1분이 되지 않아 기록하지 않았습니다."); return; }
+
+  const dateKey = summary.studyDate;
+  const todayMs = studyMsOn(dateKey);
+  const yesterdayMs = studyMsOn(addDays(dateKey, -1));
+
+  modals.resSession.textContent = fmtHM(summary.studyMs);
+
+  // 집중률은 일시정지가 있었을 때만 의미가 있다 (§6.5)
+  const hadPause = summary.totalMs > summary.studyMs;
+  modals.resFocus.hidden = !hadPause;
+  if (hadPause) {
+    const rate = Math.round((summary.studyMs / summary.totalMs) * 100);
+    modals.resFocus.textContent = `앉은 시간 ${fmtHM(summary.totalMs)} · 집중률 ${rate}%`;
+  }
+
+  // 경계를 넘은 세션이 어디까지 이어졌는지 여기서 드러난다 (§6.8)
+  modals.resSpan.textContent = fmtSpan(summary.startedAt, summary.endedAt);
+
+  modals.resToday.textContent = fmtHM(todayMs);
+  modals.resYesterday.textContent = yesterdayMs === 0 ? "기록 없음" : fmtHM(yesterdayMs);
+  renderDelta(modals.resDelta, yesterdayMs, todayMs);
+
+  modals.result.showModal?.();
+  playFinishRun();
+}
+
+/** 진행 바의 캐릭터를 그대로 재사용한 결승선 통과 연출 (§6.5) */
+function playFinishRun() {
+  const layer = modals.resultRunnerLayer;
+  if (!layer.style) return;
+  layer.style.transition = "none";
+  layer.style.transform = "translateX(0)";
+  modals.resultRunner.classList.add("is-running");
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    layer.style.transition = "";                              // CSS 값으로 되돌린다
+    layer.style.transform = "translateX(100%) translateX(24px)";
+  }));
+  setTimeout(() => modals.resultRunner.classList.remove("is-running"), 1250);
+}
+
+/* --- 복구 모달 --- */
+
+function openRecovery(info) {
+  const open = db.active?.openSegment;
+  if (!open) return;
+
+  modals.recMsg.textContent =
+    `마지막 활동이 ${fmtClock(info.lastActivityAt)}이었어요. 여기까지로 저장할까요?`;
+  modals.recSpan.textContent =
+    `${fmtSpan(sessionSpanStart(), info.lastActivityAt)} · ${fmtHM(info.lastActivityAt - sessionSpanStart())}`;
+
+  modals.recChoices.hidden = false;
+  modals.recManual.hidden = true;
+  modals.recError.hidden = true;
+  modals.recTime.min = toLocalInput(open.startedAt);
+  modals.recTime.max = toLocalInput(Date.now());
+  modals.recTime.value = toLocalInput(info.lastActivityAt);
+
+  modals.recovery.showModal?.();
+}
+
+function finishRecovery(ts) {
+  const summary = recovery.saveUntil(ts);
+  modals.recovery.close?.();
+  openResult(summary);
+}
+
+modals.recovery.addEventListener?.("cancel", (e) => {
+  // Esc로 닫으면 결정되지 않은 세션이 남아 다음 진입에서 같은 질문이 반복된다
+  e.preventDefault();
+});
+
+document.getElementById("rec-save").addEventListener("click",
+  () => finishRecovery(recovery.pending.lastActivityAt));
+
+document.getElementById("rec-manual").addEventListener("click", () => {
+  modals.recChoices.hidden = true;
+  modals.recManual.hidden = false;
+});
+
+document.getElementById("rec-manual-back").addEventListener("click", () => {
+  modals.recChoices.hidden = false;
+  modals.recManual.hidden = true;
+});
+
+document.getElementById("rec-manual-ok").addEventListener("click", () => {
+  const ts = new Date(modals.recTime.value).getTime();
+  const open = db.active?.openSegment;
+  const showError = (msg) => { modals.recError.textContent = msg; modals.recError.hidden = false; };
+
+  if (!Number.isFinite(ts)) return showError("시각을 입력해 주세요.");
+  if (ts < open.startedAt)  return showError(`${fmtClock(open.startedAt)} 이후로 입력해 주세요.`);
+  if (ts > Date.now())      return showError("아직 오지 않은 시각입니다.");
+  finishRecovery(ts);
+});
+
+document.getElementById("rec-discard").addEventListener("click", () => {
+  recovery.discard();
+  modals.recovery.close?.();
+  flash("끊긴 세션을 버렸습니다.");
+});
+
+document.getElementById("res-close").addEventListener("click", () => modals.result.close?.());
+
+/* 종료·자동종료 모두 결과 화면을 띄운다. 종료할 때마다 매번 표시한다 (§6.5) */
+hooks.onSessionEnd = openResult;
+hooks.onAutoStop = (summary) => {
+  if (summary) flash(`일시정지가 길어져 ${fmtClock(summary.endedAt)}에 자동 종료했습니다.`);
+  openResult(summary);
+};
+hooks.onRecoveryNeeded = openRecovery;
+
+/**
+ * 받침에 맞는 조사를 붙인다 (수학으로 / 국어로).
+ * 과목 이름은 사용자가 직접 적으므로 한글이 아닐 수도 있다 — 그때는 '로'가 무난하다.
+ */
+function withRo(name) {
+  const code = name.charCodeAt(name.length - 1);
+  const isHangul = code >= 0xAC00 && code <= 0xD7A3;
+  if (!isHangul) return `${name}로`;
+  const jong = (code - 0xAC00) % 28;
+  return `${name}${jong === 0 || jong === 8 ? "로" : "으로"}`;   // ㄹ 받침도 '로'
+}
+
+let dotTimer = null;
+function pulseSubjectDot() {
+  els.subjectDot.classList.remove("switched");
+  void els.subjectDot.offsetWidth;              // 리플로우를 강제해야 같은 애니메이션이 다시 돈다
+  els.subjectDot.classList.add("switched");
+  clearTimeout(dotTimer);
+  dotTimer = setTimeout(() => els.subjectDot.classList.remove("switched"), 500);
+}
+
+/* 타이머 숫자는 그대로 흐르므로, 바뀐 티가 나지 않으면 눌린 줄 모른다 (§6.2) */
+hooks.onSubjectSwitch = ({ from, to, ms, paused }) => {
+  pulseSubjectDot();
+  if (paused) {
+    flash(`일시정지 중입니다. 재개하면 ${withRo(subjectNameOf(to))} 기록합니다.`);
+    return;
+  }
+  flash(ms >= 60000
+    ? `${subjectNameOf(from)} ${fmtHM(ms)} 기록 · 이제 ${subjectNameOf(to)}`
+    : `${withRo(subjectNameOf(to))} 바꿨습니다.`);
+};
+
+function renderSubjectOptions() {
+  const current = db.active?.currentSubjectId ?? els.subjectSel.value;
+  els.subjectSel.innerHTML = "";
+  const none = new Option("미분류", "");
+  els.subjectSel.append(none);
+  for (const s of activeSubjects()) els.subjectSel.append(new Option(s.name, s.id));
+  els.subjectSel.value = current ?? "";
+}
+
+function render() {
+  const a = awaitingRecovery() ? null : db.active;
+  const spectator = isOwnedByOtherTab();
+  const running = !!a && a.status === "running" && !spectator;
+  const paused  = !!a && a.status === "paused"  && !spectator;
+
+  const dateKey = activeDateKey();
+  const todayMs = todayStudyMs();
+
+  els.todayValue.textContent = fmtHMS(todayMs);
+
+  // 경계를 넘긴 진행 중 세션은 '오늘'이 아니라 세션 기준일을 명시한다 (§6.8)
+  els.todayLabel.textContent = a && a.studyDate !== todayKey()
+    ? `${fmtMonthDay(boundaryStartOf(a.studyDate))} 순공시간`
+    : "오늘 순공시간";
+
+  renderCompare(dateKey, todayMs);
+  renderProgress(dateKey, todayMs, running);
+  updateBackupNotice();
+
+  if (a && !spectator) {
+    const span = a.openSegment ? fmtClock(sessionSpanStart()) : "";
+    els.sessionLine.hidden = false;
+    els.sessionLine.textContent = paused
+      ? `일시정지 중 · 이번 세션 ${fmtHM(sessionMs("study"))}`
+      : `${span} 시작 · 이번 세션 ${fmtHM(sessionMs("study"))}`;
+  } else {
+    els.sessionLine.hidden = true;
+  }
+
+  els.start.hidden  = running || paused;
+  els.pause.hidden  = !running;
+  els.resume.hidden = !paused;
+  els.stop.hidden   = !(running || paused);
+  els.start.disabled = spectator;
+  els.notice.hidden = !spectator;
+
+  // 세션 중에만 선택값을 세션에 맞춘다. 대기 중에는 사용자가 미리 고른 과목을 건드리지 않는다
+  if (a && els.subjectSel.value !== (a.currentSubjectId ?? "")) {
+    els.subjectSel.value = a.currentSubjectId ?? "";
+  }
+
+  els.subjectDot.style.background =
+    subjectColorOf(a ? a.currentSubjectId ?? null : els.subjectSel.value || null);
+}
+
+/** 진행 중 세션의 시작 시각 (닫힌 구간 + 열린 구간 통틀어 가장 이른 시각) */
+function sessionSpanStart() {
+  const id = db.active.sessionId;
+  const starts = db.segments.filter((s) => s.sessionId === id).map((s) => s.startedAt);
+  if (db.active.openSegment) starts.push(db.active.openSegment.startedAt);
+  return Math.min(...starts);
+}
+
+/* --- 틱 --- */
+
+function onTick() {
+  if (db.active && db.active.tabId === TAB_ID && !awaitingRecovery()) {
+    if (checkPauseTimeout()) { updateTitle(); return; }
+    // 하트비트는 study:active에만 기록한다. segments는 건드리지 않는다 (§6.4)
+    if (Date.now() - db.active.lastHeartbeatAt >= HEARTBEAT_MS) {
+      db.active.lastHeartbeatAt = Date.now();
+      saveActive();
+    }
+  }
+  updateTitle();
+  render();
+
+  // 주간 탭을 켜둔 채로 공부하면 오늘 막대가 자라야 한다.
+  // 하루 상세가 열려 있으면 건드리지 않는다 — 열어둔 과목 선택이 초기화된다.
+  if (db.active && !views.week.hidden && wk.dayPanel.hidden
+      && !wk.bars.contains(document.activeElement)) {
+    renderWeek();
+  }
+}
+
+/* --- 조작 --- */
+
+els.start.addEventListener("click", () => startSession(els.subjectSel.value || null));
+els.pause.addEventListener("click", pauseSession);
+els.resume.addEventListener("click", resumeSession);
+els.stop.addEventListener("click", () => hooks.onSessionEnd(stopSession()));
+els.subjectSel.addEventListener("change", () => {
+  if (db.active) switchSubject(els.subjectSel.value || null);
+  else render();   // 세션 전에도 색 점은 고른 과목을 따라간다
+});
+
+/* --- 부팅 --- */
+
+function mountRunners() {
+  const tpl = document.getElementById("runner-tpl");
+  if (!tpl?.content) return;
+  els.runner.append(tpl.content.cloneNode(true));
+  modals.resultRunner.append(tpl.content.cloneNode(true));
+}
+
+function boot() {
+  mountRunners();
+  fillStaticOptions();
+  renderSubjectOptions();
+
+  if (db.active) {
+    const age = Date.now() - (db.active.lastHeartbeatAt ?? 0);
+
+    if (isOwnedByOtherTab()) {
+      // 다른 탭이 살아 있다. 이 탭은 구경만 한다
+    } else if (age > STALE_MS) {
+      // 하트비트가 끊긴 세션 (§6.4)
+      const pausedWhenLost = db.active.status === "paused";
+      db.active.tabId = TAB_ID;
+      if (pausedWhenLost) {
+        // pause 상태로 끊긴 경우 순공시간에 미반영이므로 모달 없이 조용히 확정한다
+        const summary = stopSession(db.active.openSegment?.startedAt ?? db.active.lastHeartbeatAt);
+        if (summary) flash(`일시정지 상태로 끊긴 세션을 ${fmtClock(summary.endedAt)}까지로 저장했습니다.`);
+      } else {
+        recovery.pending = {
+          sessionId: db.active.sessionId,
+          lastActivityAt: db.active.lastHeartbeatAt,
+        };
+        hooks.onRecoveryNeeded(recovery.pending);
+      }
+    } else {
+      // 같은 탭의 새로고침. 그대로 이어간다
+      db.active.tabId = TAB_ID;
+      saveActive();
+      checkPauseTimeout();
+    }
+  }
+
+  updateTitle();
+  render();
+
+  // 첫 페인트 뒤에 전환을 켠다. 켜둔 채로 시작하면 캐릭터가 0에서 미끄러져 들어온다
+  requestAnimationFrame(() => document.body.classList.add("ready"));
+
+  setInterval(onTick, 1000);
+}
+
+/* 콘솔에서 데이터 계층을 직접 확인할 수 있게 노출한다 */
+window.PS = {
+  transition, startSession, pauseSession, resumeSession, stopSession, switchSubject,
+  recovery, hooks, TAB_ID, sessionMs, todayStudyMs, checkPauseTimeout, activeDateKey,
+  db, KEYS, SUBJECT_PALETTE,
+  studyDateOf, todayKey, yesterdayKey, addDays, boundaryStartOf, boundaryEndOf,
+  crossesDayBoundary, sessionSpanOf,
+  segmentsOn, studyMsOn, totalMsOn, avg7MsBefore, subjectBreakdownOn, weekKeysOf,
+  goalMinutesOn, setGoalMinutes,
+  createSubject, activeSubjects, subjectNameOf, subjectColorOf, withRo,
+  fmtHMS, fmtHM, fmtClock, fmtMonthDay, fmtSpan,
+  saveSettings, saveSubjects, saveGoals, saveSegments, saveActive,
+};
+
+/* =========================================================
+   주간 화면 · 하루 상세 (PRD §6.6, §6.7)
+   ========================================================= */
+
+const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
+
+const week = {
+  anchor: null,   // 보고 있는 주 (그 주에 속한 아무 날짜)
+  openDay: null,  // 열려 있는 하루 상세
+};
+
+const wk = {
+  panel:     document.getElementById("week-panel"),
+  dayPanel:  document.getElementById("day-panel"),
+  range:     document.getElementById("week-range"),
+  totalLabel:document.getElementById("week-total-label"),
+  total:     document.getElementById("week-total"),
+  prevBase:  document.getElementById("week-prev-base"),
+  delta:     document.getElementById("week-delta"),
+  bars:      document.getElementById("week-bars"),
+  goalLine:  document.getElementById("week-goal-line"),
+  next:      document.getElementById("week-next"),
+  dayTitle:  document.getElementById("day-title"),
+  dayTotal:  document.getElementById("day-total"),
+  timeline:  document.getElementById("day-timeline"),
+  ticks:     document.getElementById("day-ticks"),
+  segList:   document.getElementById("day-segments"),
+  dist:      document.getElementById("day-dist"),
+};
+
+/* 과목 이름은 사용자 입력이다. 항상 textContent로만 넣는다 */
+function elem(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function weekdayIndex(dateKey) {
+  const [y, m, d] = dateKey.split("-").map(Number);
+  const dow = new Date(y, m - 1, d).getDay();
+  return dow === 0 ? 6 : dow - 1;   // 월요일 시작
+}
+
+const sumWeek = (keys) => keys.reduce((sum, k) => sum + studyMsOn(k), 0);
+
+/* --- 주간 --- */
+
+function renderWeek() {
+  const keys = weekKeysOf(week.anchor ?? todayKey());
+  const isCurrentWeek = keys[0] === weekKeysOf(todayKey())[0];
+
+  wk.range.textContent =
+    `${fmtMonthDay(boundaryStartOf(keys[0]))} – ${fmtMonthDay(boundaryStartOf(keys[6]))}`;
+  wk.totalLabel.textContent = isCurrentWeek ? "이번 주" : "이 주";
+
+  const values = keys.map(studyMsOn);
+  const total = values.reduce((a, b) => a + b, 0);
+  const prevTotal = sumWeek(weekKeysOf(addDays(keys[0], -7)));
+
+  wk.total.textContent = fmtHM(total);
+  wk.prevBase.textContent = prevTotal === 0 ? "기록 없음" : fmtHM(prevTotal);
+  // 끝난 주에 '남음'은 사실과 다르다. 지난 주끼리 비교할 때는 '적음'으로 적는다
+  renderDelta(wk.delta, prevTotal, total, isCurrentWeek ? "남음" : "적음");
+
+  const goals = keys.map((k) => (goalMinutesOn(k) ?? 0) * 60000);
+  const max = Math.max(...values, ...goals, 1);
+  const today = todayKey();
+
+  wk.bars.innerHTML = "";
+  let achieved = 0;
+
+  keys.forEach((key, i) => {
+    const ms = values[i];
+    const goalMs = goals[i];
+    const done = goalMs > 0 && ms >= goalMs;
+    if (done) achieved++;
+
+    const col = elem("button", "bar-col" + (key === today ? " is-today" : ""));
+    col.dataset.date = key;
+    col.setAttribute("aria-label", `${fmtMonthDay(boundaryStartOf(key))} ${fmtHM(ms)}`);
+
+    const slot = elem("div", "bar-slot");
+    if (goalMs > 0) {
+      const tick = elem("div", "goal-tick");
+      tick.style.bottom = `${Math.min((goalMs / max) * 100, 100)}%`;
+      slot.append(tick);
+    }
+    const bar = elem("div", "bar" + (ms === 0 ? " is-empty" : done ? " is-done" : ""));
+    bar.style.height = `${(ms / max) * 100}%`;
+    slot.append(bar);
+
+    col.append(slot, elem("div", "bar-label", WEEKDAYS[i]),
+                     elem("div", "bar-value", ms === 0 ? "—" : fmtHM(ms)));
+    wk.bars.append(col);
+  });
+
+  wk.next.disabled = isCurrentWeek;   // 오지 않은 주는 볼 것이 없다
+
+  const withGoal = goals.filter((g) => g > 0);
+  const uniqueGoals = [...new Set(withGoal)];
+  wk.goalLine.textContent =
+    withGoal.length === 0 ? "하루 목표를 정하면 막대에 목표선이 그려집니다"
+    : uniqueGoals.length === 1 ? `목표 ${fmtHM(uniqueGoals[0])} · ${withGoal.length}일 중 ${achieved}일 달성`
+    : `${withGoal.length}일 중 ${achieved}일 목표 달성`;
+}
+
+/* --- 하루 상세 --- */
+
+function openDayDetail(dateKey) {
+  week.openDay = dateKey;
+  wk.panel.hidden = true;
+  wk.dayPanel.hidden = false;
+  renderDay();
+}
+
+function closeDayDetail() {
+  week.openDay = null;
+  wk.dayPanel.hidden = true;
+  wk.panel.hidden = false;
+  renderWeek();
+}
+
+function renderDay() {
+  const key = week.openDay;
+  if (!key) return;
+
+  const t0 = boundaryStartOf(key);
+  const segs = segmentsOn(key).slice().sort((a, b) => a.startedAt - b.startedAt);
+  // 경계를 넘긴 세션까지 담기게 오른쪽 끝을 늘린다 (§6.8)
+  const t1 = Math.max(boundaryEndOf(key), ...segs.map((s) => s.endedAt ?? t0));
+  const span = t1 - t0;
+
+  wk.dayTitle.textContent = `${fmtMonthDay(t0)} ${WEEKDAYS[weekdayIndex(key)]}요일`;
+  wk.dayTotal.textContent = fmtHM(studyMsOn(key));
+
+  wk.timeline.innerHTML = "";
+  for (const s of segs) {
+    const bar = elem("div", "tl-seg" + (s.kind === "pause" ? " pause" : ""));
+    bar.style.left  = `${((s.startedAt - t0) / span) * 100}%`;
+    bar.style.width = `${Math.max((durationOf(s) / span) * 100, 0.4)}%`;
+    if (s.kind === "study") bar.style.background = subjectColorOf(s.subjectId);
+    bar.title = `${fmtClock(s.startedAt)} ~ ${fmtClock(s.endedAt)} · ${subjectNameOf(s.subjectId)}`;
+    wk.timeline.append(bar);
+  }
+
+  wk.ticks.innerHTML = "";
+  for (let i = 0; i <= 4; i++) wk.ticks.append(elem("span", null, fmtClock(t0 + (span * i) / 4)));
+
+  wk.segList.innerHTML = "";
+  if (segs.length === 0) {
+    wk.segList.append(elem("p", "empty-note", "이 날은 기록이 없습니다"));
+  }
+  for (const s of segs) {
+    const row = elem("div", "seg-row");
+    const dot = elem("span", "seg-dot");
+    dot.style.background = s.kind === "pause" ? "var(--whisper)" : subjectColorOf(s.subjectId);
+
+    // 경계를 넘은 구간만 날짜까지 적는다
+    const timeText = crossesDayBoundary(s)
+      ? fmtSpan(s.startedAt, s.endedAt)
+      : `${fmtClock(s.startedAt)} ~ ${fmtClock(s.endedAt)}`;
+
+    row.append(dot, elem("span", "seg-time", timeText), elem("span", "seg-dur", fmtHM(durationOf(s))));
+    row.append(s.kind === "pause" ? elem("span", "seg-pause", "일시정지") : buildSegmentSubjectSelect(s));
+    wk.segList.append(row);
+  }
+
+  const dist = subjectBreakdownOn(key);
+  wk.dist.innerHTML = "";
+  if (dist.length === 0) {
+    wk.dist.append(elem("p", "empty-note", "—"));
+  }
+  const top = dist[0]?.ms || 1;
+  for (const item of dist) {
+    const row = elem("div", "dist-row");
+    const dot = elem("span", "seg-dot");
+    dot.style.background = subjectColorOf(item.subjectId);
+    const track = elem("span", "dist-bar");
+    const fill = elem("i");
+    fill.style.width = `${(item.ms / top) * 100}%`;
+    fill.style.background = subjectColorOf(item.subjectId);
+    track.append(fill);
+    row.append(dot, elem("span", "dist-name", subjectNameOf(item.subjectId)), track,
+               elem("span", "dist-val", fmtHM(item.ms)));
+    wk.dist.append(row);
+  }
+}
+
+/**
+ * 사후 과목 지정 (§6.6)
+ * 과목 변경만 허용한다. 시각 편집은 구간 겹침·경계 넘김 검증이 필요해 범위가 급격히 커진다.
+ */
+function buildSegmentSubjectSelect(seg) {
+  const sel = document.createElement("select");
+  sel.append(new Option("미분류", ""));
+  const actives = activeSubjects();
+  for (const s of actives) sel.append(new Option(s.name, s.id));
+  // 보관된 과목이 붙어 있던 구간이면 그 항목을 살려둔다. 아니면 조용히 미분류로 바뀐다
+  if (seg.subjectId && !actives.some((s) => s.id === seg.subjectId)) {
+    sel.append(new Option(`${subjectNameOf(seg.subjectId)} (보관됨)`, seg.subjectId));
+  }
+  sel.value = seg.subjectId ?? "";
+  sel.addEventListener("change", () => setSegmentSubject(seg.id, sel.value || null));
+  return sel;
+}
+
+function setSegmentSubject(segmentId, subjectId) {
+  const seg = db.segments.find((s) => s.id === segmentId);
+  if (!seg || seg.kind !== "study") return;
+  seg.subjectId = subjectId;
+  saveSegments();
+  broadcast();
+  renderDay();
+  render();
+}
+
+document.getElementById("week-prev").addEventListener("click", () => {
+  week.anchor = addDays(weekKeysOf(week.anchor ?? todayKey())[0], -7);
+  renderWeek();
+});
+
+document.getElementById("week-next").addEventListener("click", () => {
+  week.anchor = addDays(weekKeysOf(week.anchor ?? todayKey())[0], 7);
+  renderWeek();
+});
+
+document.getElementById("day-back").addEventListener("click", closeDayDetail);
+
+Object.assign(window.PS, {
+  week, renderWeek, renderDay, openDayDetail, closeDayDetail, setSegmentSubject, weekdayIndex,
+});
+
+/* =========================================================
+   설정 · 백업 (PRD §5, §6.11)
+   ========================================================= */
+
+const BOUNDARY_HOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const PAUSE_OPTIONS  = [10, 20, 30, 45, 60, 90, 120, 180];   // 기본 30분, 최대 3시간 (§6.3)
+const BACKUP_DUE_MS  = 7 * 24 * 60 * 60 * 1000;
+
+const st = {
+  subjectList:  document.getElementById("subject-list"),
+  archivedWrap: document.getElementById("archived-wrap"),
+  archivedList: document.getElementById("archived-list"),
+  newSubject:   document.getElementById("new-subject"),
+  goalH:    document.getElementById("goal-h"),
+  goalM:    document.getElementById("goal-m"),
+  goalNote: document.getElementById("goal-note"),
+  boundary: document.getElementById("boundary-hour"),
+  pause:    document.getElementById("pause-timeout"),
+  themeToggle: document.getElementById("theme-toggle"),
+  backupNote:  document.getElementById("backup-note"),
+  importFile:  document.getElementById("import-file"),
+  banner:     document.getElementById("backup-banner"),
+  bannerText: document.getElementById("backup-banner-text"),
+  impModal: document.getElementById("import-modal"),
+  impNew: document.getElementById("imp-new"),
+  impNewRange: document.getElementById("imp-new-range"),
+  impCur: document.getElementById("imp-cur"),
+  impCurRange: document.getElementById("imp-cur-range"),
+};
+
+function fillStaticOptions() {
+  for (const h of BOUNDARY_HOURS) {
+    st.boundary.append(new Option(`${String(h).padStart(2, "0")}:00`, String(h)));
+  }
+  for (const m of PAUSE_OPTIONS) st.pause.append(new Option(fmtHM(m * 60000), String(m)));
+}
+
+/* --- 백업 필요 판정 --- */
+
+function needsBackup() {
+  if (db.segments.length === 0) return false;   // 잃을 것이 없으면 재촉하지 않는다
+  const last = db.settings.lastBackupAt;
+  return !last || Date.now() - last > BACKUP_DUE_MS;
+}
+
+/* 타이머 화면 안내. 설정 탭까지 찾아가지 않아도 여기서 바로 내보낼 수 있게 한다 */
+function updateBackupNotice() {
+  const due = needsBackup();
+  st.banner.hidden = !due;
+  if (!due) return;
+
+  const last = db.settings.lastBackupAt;
+  st.bannerText.textContent = last
+    ? `백업한 지 ${Math.floor((Date.now() - last) / 86400000)}일 지났습니다. 기록은 이 브라우저에만 있습니다.`
+    : "기록이 이 브라우저에만 있습니다. 파일로 내보내 두세요.";
+}
+
+/* --- 과목 관리 --- */
+
+function afterSubjectChange() {
+  renderSubjectOptions();
+  renderSettings();
+  render();
+  if (!views.week.hidden) (week.openDay ? renderDay() : renderWeek());
+  broadcast();
+}
+
+function buildSubjectRow(subject) {
+  const row = elem("div", "subject-row" + (subject.archived ? " archived" : ""));
+
+  const dot = elem("span", "seg-dot");
+  dot.style.background = resolveColor(subject.color);
+
+  const name = document.createElement("input");
+  name.className = "subj-name";
+  name.type = "text";
+  name.maxLength = 20;
+  name.value = subject.name;
+  name.addEventListener("change", () => {
+    const next = name.value.trim();
+    if (!next) { name.value = subject.name; return; }   // 빈 이름은 되돌린다
+    subject.name = next;
+    saveSubjects();
+    afterSubjectChange();
+  });
+
+  const color = document.createElement("select");
+  for (const p of SUBJECT_PALETTE) color.append(new Option(p.label, p.token));
+  if (!SUBJECT_PALETTE.some((p) => p.token === subject.color)) {
+    color.append(new Option("사용자 색", subject.color));
+  }
+  color.value = subject.color;
+  color.addEventListener("change", () => {
+    subject.color = color.value;
+    saveSubjects();
+    afterSubjectChange();
+  });
+
+  const toggle = elem("button", "btn-quiet", subject.archived ? "복원" : "보관");
+  toggle.addEventListener("click", () => {
+    subject.archived = !subject.archived;
+    saveSubjects();
+    afterSubjectChange();
+  });
+
+  row.append(dot, name, color, toggle);
+  return row;
+}
+
+function renderSubjectRows() {
+  const active = db.subjects.filter((s) => !s.archived).sort((a, b) => a.order - b.order);
+  const archived = db.subjects.filter((s) => s.archived);
+
+  st.subjectList.innerHTML = "";
+  if (active.length === 0) {
+    st.subjectList.append(elem("p", "empty-note", "과목 없이도 시작할 수 있습니다. 그 시간은 미분류로 쌓입니다."));
+  }
+  for (const s of active) st.subjectList.append(buildSubjectRow(s));
+
+  st.archivedWrap.hidden = archived.length === 0;
+  st.archivedList.innerHTML = "";
+  for (const s of archived) st.archivedList.append(buildSubjectRow(s));
+}
+
+/* --- 설정 화면 --- */
+
+function renderSettings() {
+  renderSubjectRows();
+
+  const goalMin = goalMinutesOn(todayKey()) ?? 0;
+  st.goalH.value = Math.floor(goalMin / 60);
+  st.goalM.value = goalMin % 60;
+  const applied = db.goals.filter((g) => g.effectiveFrom <= todayKey()).pop();
+  st.goalNote.textContent = goalMin > 0
+    ? `목표 ${fmtHM(goalMin * 60000)}${applied ? ` · ${applied.effectiveFrom}부터 적용` : ""}`
+    : "목표를 0으로 두면 진행 바를 표시하지 않습니다.";
+
+  st.boundary.value = String(db.settings.dayBoundaryHour);
+  st.pause.value = String(db.settings.pauseTimeoutMin);
+
+  for (const btn of st.themeToggle.children) {
+    btn.classList.toggle("on", btn.dataset.themeValue === db.settings.theme);
+  }
+
+  const last = db.settings.lastBackupAt;
+  const due = needsBackup();
+  st.backupNote.textContent = !last
+    ? (db.segments.length === 0 ? "아직 기록이 없습니다." : "아직 백업한 적이 없습니다.")
+    : `마지막 백업 ${fmtMonthDay(last)}${due ? ` · ${Math.floor((Date.now() - last) / 86400000)}일 지났습니다` : ""}`;
+  st.backupNote.classList.toggle("backup-due", due);
+
+  updateBackupNotice();
+}
+
+/* --- 설정 변경 --- */
+
+function commitGoal() {
+  const h = Math.max(0, Math.min(23, Number(st.goalH.value) || 0));
+  const m = Math.max(0, Math.min(59, Number(st.goalM.value) || 0));
+  setGoalMinutes(h * 60 + m);
+  renderSettings();
+  render();
+  broadcast();
+}
+st.goalH.addEventListener("change", commitGoal);
+st.goalM.addEventListener("change", commitGoal);
+
+st.boundary.addEventListener("change", () => {
+  db.settings.dayBoundaryHour = Number(st.boundary.value);
+  saveSettings();
+  renderSettings();
+  render();
+  broadcast();
+});
+
+st.pause.addEventListener("change", () => {
+  db.settings.pauseTimeoutMin = Number(st.pause.value);
+  saveSettings();
+  renderSettings();
+});
+
+st.themeToggle.addEventListener("click", (e) => {
+  const value = e.target.dataset?.themeValue;
+  if (!value) return;
+  db.settings.theme = value;
+  saveSettings();
+  applyTheme();
+  renderSettings();
+});
+
+document.getElementById("add-subject").addEventListener("click", addSubjectFromInput);
+st.newSubject.addEventListener("keydown", (e) => { if (e.key === "Enter") addSubjectFromInput(); });
+
+function addSubjectFromInput() {
+  const name = st.newSubject.value.trim();
+  if (!name) return;
+  createSubject(name);
+  st.newSubject.value = "";
+  afterSubjectChange();
+}
+
+/* --- 내보내기 / 가져오기 (§6.11) --- */
+
+function exportData() {
+  // 진행 중인 세션(active)은 담지 않는다. 다른 기기·다른 시점에서 되살릴 상태가 아니다
+  const payload = {
+    app: "순공",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    settings: db.settings,
+    subjects: db.subjects,
+    goal: db.goals,
+    segments: db.segments,
+  };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `순공-${todayKey()}.json`;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+
+  db.settings.lastBackupAt = Date.now();
+  saveSettings();
+  renderSettings();
+  flash("내보내기를 마쳤습니다.");
+}
+
+function describeSegments(segments) {
+  const dates = segments.map((s) => s.studyDate).filter(Boolean).sort();
+  if (dates.length === 0) return "기록 없음";
+  return `${fmtMonthDay(boundaryStartOf(dates[0]))} – ${fmtMonthDay(boundaryStartOf(dates[dates.length - 1]))}`;
+}
+
+let pendingImport = null;
+
+function reviewImport(data) {
+  if (!data || !Array.isArray(data.segments) || !Array.isArray(data.subjects)) {
+    flash("순공 백업 파일이 아닙니다.");
+    return;
+  }
+  pendingImport = data;
+  st.impNew.textContent = `구간 ${data.segments.length}개 · 과목 ${data.subjects.length}개`;
+  st.impNewRange.textContent = describeSegments(data.segments);
+  st.impCur.textContent = `구간 ${db.segments.length}개 · 과목 ${db.subjects.length}개`;
+  st.impCurRange.textContent = describeSegments(db.segments);
+  st.impModal.showModal?.();
+}
+
+function applyImport(data) {
+  db.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings || {});
+  db.subjects = data.subjects || [];
+  // 예전 형식(goal이 단일 객체)도 받아들인다
+  db.goals = Array.isArray(data.goal) ? data.goal : data.goal ? [data.goal] : [];
+  db.segments = data.segments || [];
+  db.active = null;
+
+  saveSettings(); saveSubjects(); saveGoals(); saveSegments(); saveActive();
+
+  applyTheme();
+  renderSubjectOptions();
+  renderSettings();
+  render();
+  broadcast();
+  flash("가져오기를 마쳤습니다.");
+}
+
+document.getElementById("export-btn").addEventListener("click", exportData);
+document.getElementById("backup-banner-export").addEventListener("click", exportData);
+document.getElementById("import-btn").addEventListener("click", () => st.importFile.click());
+
+st.importFile.addEventListener("change", () => {
+  const file = st.importFile.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try { reviewImport(JSON.parse(reader.result)); }
+    catch { flash("파일을 읽을 수 없습니다."); }
+  };
+  reader.readAsText(file);
+  st.importFile.value = "";   // 같은 파일을 다시 고를 수 있게 비운다
+});
+
+document.getElementById("imp-ok").addEventListener("click", () => {
+  st.impModal.close?.();
+  if (pendingImport) applyImport(pendingImport);
+  pendingImport = null;
+});
+document.getElementById("imp-cancel").addEventListener("click", () => {
+  st.impModal.close?.();
+  pendingImport = null;
+});
+
+Object.assign(window.PS, {
+  renderSettings, exportData, applyImport, reviewImport, needsBackup, fillStaticOptions,
+  updateBackupNotice,
+});
+
+wk.bars.addEventListener("click", (e) => {
+  const col = e.target.closest?.(".bar-col");
+  if (col) openDayDetail(col.dataset.date);
+});
+
+/* =========================================================
+   탭 전환
+   라우팅 없음. 새로고침 시 항상 타이머 탭으로 복귀한다. (PRD §5)
+   ========================================================= */
+
+const tabButtons = document.querySelectorAll(".tab");
+const views = {
+  timer:    document.getElementById("view-timer"),
+  week:     document.getElementById("view-week"),
+  settings: document.getElementById("view-settings"),
+};
+
+function showTab(name) {
+  for (const btn of tabButtons) {
+    btn.setAttribute("aria-selected", String(btn.dataset.tab === name));
+  }
+  for (const [key, el] of Object.entries(views)) {
+    el.hidden = key !== name;
+  }
+  if (name === "week") week.openDay ? renderDay() : renderWeek();
+  if (name === "settings") renderSettings();
+}
+
+for (const btn of tabButtons) {
+  btn.addEventListener("click", () => showTab(btn.dataset.tab));
+}
+
+showTab("timer");
+
+boot();
+</script>
+
+</body>
+</html>
